@@ -4,7 +4,7 @@ status: backlog
 created: 2025-09-04T06:12:12Z
 progress: 0%
 prd: .claude/prds/todo-list.md
-github: [Will be updated when synced to GitHub]
+github: https://github.com/caoyongxueba/ccpm-todo-list/issues/1
 ---
 
 # Epic: todo-list
@@ -170,16 +170,15 @@ High-level task categories that will be created:
 **Risk Buffer**: 3-5 additional days for testing, refinement, and unexpected issues
 
 ## Tasks Created
-- [ ] 001.md - HTML Structure & Basic Styling (parallel: true)
-- [ ] 002.md - Data Layer Implementation (parallel: true)
-- [ ] 003.md - Core Task Management UI (parallel: false)
-- [ ] 004.md - Calendar Integration (parallel: false)
-- [ ] 005.md - Filtering & Search System (parallel: true)
-- [ ] 006.md - Daily Review Feature (parallel: true)
-- [ ] 007.md - Data Import/Export & Mobile Optimization (parallel: true)
-- [ ] 008.md - Accessibility, Testing & Polish (parallel: false)
+- [ ] #4 - HTML Structure & Basic Styling (parallel: true)
+- [ ] #5 - Data Layer Implementation (parallel: true)  
+- [ ] #7 - Core Task Management UI (parallel: false)
+- [ ] #8 - Calendar Integration (parallel: false)
+- [ ] #2 - Filtering & Search System (parallel: true)
+- [ ] #3 - Daily Review Feature (parallel: true)
+- [ ] #6 - Data Import/Export & Mobile Optimization (parallel: true)
+- [ ] #9 - Accessibility, Testing & Polish (parallel: false)
 
 Total tasks: 8
 Parallel tasks: 5
 Sequential tasks: 3
-Estimated total effort: 160 hours (20 days)
