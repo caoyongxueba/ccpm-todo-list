@@ -668,5 +668,484 @@
             <p>&copy; 2024 CCPM Todo List. Built with accessibility and performance in mind.</p>
         </footer>
     </div>
+
+    <!-- Data Layer Implementation -->
+    <script>
+        'use strict';
+
+        // ================================
+        // TASK DATA MODEL
+        // ================================
+        
+        /**
+         * Task class representing a single task with all required fields
+         */
+        class Task {
+            constructor(data = {}) {
+                this.id = data.id || this._generateId();
+                this.title = data.title || '';
+                this.description = data.description || '';
+                this.category = data.category || 'general';
+                this.priority = data.priority || 'medium'; // low, medium, high, urgent
+                this.dueDate = data.dueDate || null; // ISO string or null
+                this.completed = data.completed || false;
+                this.createdAt = data.createdAt || new Date().toISOString();
+                this.updatedAt = data.updatedAt || new Date().toISOString();
+                this.tags = data.tags || [];
+                this.estimatedDuration = data.estimatedDuration || null; // minutes
+                this.actualDuration = data.actualDuration || null; // minutes
+                this.parentTaskId = data.parentTaskId || null; // for subtasks
+                this.order = data.order || 0; // for sorting
+                
+                // Validate required fields
+                this._validate();
+            }
+
+            _generateId() {
+                return 'task_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            }
+
+            _validate() {
+                const errors = [];
+                
+                if (!this.title || this.title.trim().length === 0) {
+                    errors.push('Title is required');
+                }
+                
+                if (this.title && this.title.length > 200) {
+                    errors.push('Title cannot exceed 200 characters');
+                }
+                
+                if (this.description && this.description.length > 2000) {
+                    errors.push('Description cannot exceed 2000 characters');
+                }
+                
+                const validPriorities = ['low', 'medium', 'high', 'urgent'];
+                if (!validPriorities.includes(this.priority)) {
+                    errors.push('Priority must be one of: ' + validPriorities.join(', '));
+                }
+                
+                if (this.dueDate && isNaN(Date.parse(this.dueDate))) {
+                    errors.push('Due date must be a valid ISO date string');
+                }
+                
+                if (this.estimatedDuration !== null && (this.estimatedDuration < 0 || this.estimatedDuration > 9999)) {
+                    errors.push('Estimated duration must be between 0 and 9999 minutes');
+                }
+                
+                if (this.actualDuration !== null && (this.actualDuration < 0 || this.actualDuration > 9999)) {
+                    errors.push('Actual duration must be between 0 and 9999 minutes');
+                }
+
+                if (errors.length > 0) {
+                    throw new Error('Task validation failed: ' + errors.join(', '));
+                }
+            }
+
+            update(data) {
+                const allowedFields = ['title', 'description', 'category', 'priority', 'dueDate', 
+                                     'completed', 'tags', 'estimatedDuration', 'actualDuration', 
+                                     'parentTaskId', 'order'];
+                
+                for (const [key, value] of Object.entries(data)) {
+                    if (allowedFields.includes(key)) {
+                        this[key] = value;
+                    }
+                }
+                
+                this.updatedAt = new Date().toISOString();
+                this._validate();
+            }
+
+            toJSON() {
+                return {
+                    id: this.id,
+                    title: this.title,
+                    description: this.description,
+                    category: this.category,
+                    priority: this.priority,
+                    dueDate: this.dueDate,
+                    completed: this.completed,
+                    createdAt: this.createdAt,
+                    updatedAt: this.updatedAt,
+                    tags: this.tags,
+                    estimatedDuration: this.estimatedDuration,
+                    actualDuration: this.actualDuration,
+                    parentTaskId: this.parentTaskId,
+                    order: this.order
+                };
+            }
+
+            clone() {
+                return new Task(this.toJSON());
+            }
+
+            isOverdue() {
+                if (!this.dueDate || this.completed) return false;
+                return new Date(this.dueDate) < new Date();
+            }
+
+            getDaysUntilDue() {
+                if (!this.dueDate) return null;
+                const now = new Date();
+                const due = new Date(this.dueDate);
+                const diffTime = due - now;
+                return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            }
+        }
+
+        // ================================
+        // CATEGORY DATA MODEL
+        // ================================
+        
+        /**
+         * Category class for organizing tasks
+         */
+        class Category {
+            constructor(data = {}) {
+                this.id = data.id || this._generateId();
+                this.name = data.name || '';
+                this.color = data.color || '#2563eb';
+                this.description = data.description || '';
+                this.order = data.order || 0;
+                this.createdAt = data.createdAt || new Date().toISOString();
+                this.updatedAt = data.updatedAt || new Date().toISOString();
+                
+                this._validate();
+            }
+
+            _generateId() {
+                return 'category_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            }
+
+            _validate() {
+                const errors = [];
+                
+                if (!this.name || this.name.trim().length === 0) {
+                    errors.push('Category name is required');
+                }
+                
+                if (this.name && this.name.length > 50) {
+                    errors.push('Category name cannot exceed 50 characters');
+                }
+                
+                if (this.description && this.description.length > 200) {
+                    errors.push('Category description cannot exceed 200 characters');
+                }
+
+                if (errors.length > 0) {
+                    throw new Error('Category validation failed: ' + errors.join(', '));
+                }
+            }
+
+            update(data) {
+                const allowedFields = ['name', 'color', 'description', 'order'];
+                
+                for (const [key, value] of Object.entries(data)) {
+                    if (allowedFields.includes(key)) {
+                        this[key] = value;
+                    }
+                }
+                
+                this.updatedAt = new Date().toISOString();
+                this._validate();
+            }
+
+            toJSON() {
+                return {
+                    id: this.id,
+                    name: this.name,
+                    color: this.color,
+                    description: this.description,
+                    order: this.order,
+                    createdAt: this.createdAt,
+                    updatedAt: this.updatedAt
+                };
+            }
+        }
+
+        // ================================
+        // DATA STORAGE MANAGER
+        // ================================
+        
+        /**
+         * Storage manager for handling localStorage operations with error handling and quota management
+         */
+        class StorageManager {
+            constructor() {
+                this.storageKey = 'ccpm_todo_data';
+                this.backupKey = 'ccpm_todo_backup';
+                this.maxRetries = 3;
+                this.checkStorageAvailability();
+            }
+
+            checkStorageAvailability() {
+                try {
+                    const testKey = '__ccpm_test__';
+                    localStorage.setItem(testKey, 'test');
+                    localStorage.removeItem(testKey);
+                    this.isAvailable = true;
+                } catch (error) {
+                    console.warn('localStorage is not available:', error.message);
+                    this.isAvailable = false;
+                }
+            }
+
+            save(data) {
+                if (!this.isAvailable) {
+                    throw new Error('Storage is not available');
+                }
+
+                const serialized = JSON.stringify(data);
+                
+                // Check if data would exceed storage quota
+                if (this._wouldExceedQuota(serialized)) {
+                    this._cleanupOldBackups();
+                }
+
+                let retries = 0;
+                while (retries < this.maxRetries) {
+                    try {
+                        // Create backup before saving
+                        this._createBackup();
+                        localStorage.setItem(this.storageKey, serialized);
+                        return true;
+                    } catch (error) {
+                        retries++;
+                        if (error.name === 'QuotaExceededError') {
+                            if (retries < this.maxRetries) {
+                                this._handleQuotaExceeded();
+                            } else {
+                                throw new Error('Storage quota exceeded and cleanup failed');
+                            }
+                        } else {
+                            throw error;
+                        }
+                    }
+                }
+                return false;
+            }
+
+            load() {
+                if (!this.isAvailable) {
+                    return null;
+                }
+
+                try {
+                    const data = localStorage.getItem(this.storageKey);
+                    if (!data) return null;
+                    
+                    const parsed = JSON.parse(data);
+                    return this._validateAndRepairData(parsed);
+                } catch (error) {
+                    console.error('Failed to load data from storage:', error);
+                    return this._loadFromBackup();
+                }
+            }
+
+            _createBackup() {
+                try {
+                    const currentData = localStorage.getItem(this.storageKey);
+                    if (currentData) {
+                        const backupData = {
+                            data: currentData,
+                            timestamp: new Date().toISOString()
+                        };
+                        localStorage.setItem(this.backupKey, JSON.stringify(backupData));
+                    }
+                } catch (error) {
+                    console.warn('Failed to create backup:', error);
+                }
+            }
+
+            _loadFromBackup() {
+                try {
+                    const backupData = localStorage.getItem(this.backupKey);
+                    if (backupData) {
+                        const backup = JSON.parse(backupData);
+                        const parsed = JSON.parse(backup.data);
+                        console.info('Loaded data from backup created at:', backup.timestamp);
+                        return this._validateAndRepairData(parsed);
+                    }
+                } catch (error) {
+                    console.error('Failed to load backup data:', error);
+                }
+                return null;
+            }
+
+            _validateAndRepairData(data) {
+                if (!data || typeof data !== 'object') {
+                    return { tasks: [], categories: [] };
+                }
+
+                const repaired = {
+                    tasks: Array.isArray(data.tasks) ? data.tasks : [],
+                    categories: Array.isArray(data.categories) ? data.categories : [],
+                    version: data.version || '1.0'
+                };
+
+                // Validate and repair tasks
+                repaired.tasks = repaired.tasks.filter(taskData => {
+                    try {
+                        new Task(taskData); // Validate by creating instance
+                        return true;
+                    } catch (error) {
+                        console.warn('Removing invalid task:', taskData.id, error.message);
+                        return false;
+                    }
+                });
+
+                // Validate and repair categories
+                repaired.categories = repaired.categories.filter(categoryData => {
+                    try {
+                        new Category(categoryData); // Validate by creating instance
+                        return true;
+                    } catch (error) {
+                        console.warn('Removing invalid category:', categoryData.id, error.message);
+                        return false;
+                    }
+                });
+
+                return repaired;
+            }
+
+            _wouldExceedQuota(data) {
+                // Estimate if new data would exceed quota (rough calculation)
+                try {
+                    const currentSize = this._getStorageSize();
+                    const dataSize = new Blob([data]).size;
+                    const quotaLimit = 5 * 1024 * 1024; // 5MB rough estimate
+                    return (currentSize + dataSize) > quotaLimit * 0.9; // 90% threshold
+                } catch (error) {
+                    return false; // If we can't estimate, try anyway
+                }
+            }
+
+            _getStorageSize() {
+                let total = 0;
+                for (let key in localStorage) {
+                    if (localStorage.hasOwnProperty(key)) {
+                        total += localStorage[key].length;
+                    }
+                }
+                return total;
+            }
+
+            _handleQuotaExceeded() {
+                console.warn('Storage quota exceeded, attempting cleanup...');
+                this._cleanupOldBackups();
+                
+                // Remove oldest completed tasks if still over quota
+                try {
+                    const data = this.load();
+                    if (data && data.tasks) {
+                        const completedTasks = data.tasks
+                            .filter(task => task.completed)
+                            .sort((a, b) => new Date(a.updatedAt) - new Date(b.updatedAt));
+                        
+                        // Remove oldest 25% of completed tasks
+                        const toRemove = Math.ceil(completedTasks.length * 0.25);
+                        const taskIdsToRemove = completedTasks.slice(0, toRemove).map(task => task.id);
+                        
+                        data.tasks = data.tasks.filter(task => !taskIdsToRemove.includes(task.id));
+                        
+                        localStorage.setItem(this.storageKey, JSON.stringify(data));
+                    }
+                } catch (error) {
+                    console.error('Failed to cleanup old tasks:', error);
+                }
+            }
+
+            _cleanupOldBackups() {
+                try {
+                    localStorage.removeItem(this.backupKey);
+                } catch (error) {
+                    console.warn('Failed to cleanup backups:', error);
+                }
+            }
+
+            clear() {
+                if (!this.isAvailable) return;
+                
+                try {
+                    localStorage.removeItem(this.storageKey);
+                    localStorage.removeItem(this.backupKey);
+                } catch (error) {
+                    console.error('Failed to clear storage:', error);
+                }
+            }
+
+            getStorageInfo() {
+                if (!this.isAvailable) {
+                    return { available: false, used: 0, total: 0 };
+                }
+
+                try {
+                    const used = this._getStorageSize();
+                    const total = 5 * 1024 * 1024; // Estimated 5MB limit
+                    return {
+                        available: true,
+                        used: used,
+                        total: total,
+                        usedPercentage: Math.round((used / total) * 100)
+                    };
+                } catch (error) {
+                    return { available: false, used: 0, total: 0 };
+                }
+            }
+        }
+
+        // ================================
+        // OBSERVER PATTERN IMPLEMENTATION
+        // ================================
+        
+        /**
+         * Event emitter for data change notifications
+         */
+        class DataEventEmitter {
+            constructor() {
+                this.listeners = new Map();
+            }
+
+            on(event, callback) {
+                if (!this.listeners.has(event)) {
+                    this.listeners.set(event, []);
+                }
+                this.listeners.get(event).push(callback);
+            }
+
+            off(event, callback) {
+                if (this.listeners.has(event)) {
+                    const callbacks = this.listeners.get(event);
+                    const index = callbacks.indexOf(callback);
+                    if (index > -1) {
+                        callbacks.splice(index, 1);
+                    }
+                }
+            }
+
+            emit(event, data) {
+                if (this.listeners.has(event)) {
+                    this.listeners.get(event).forEach(callback => {
+                        try {
+                            callback(data);
+                        } catch (error) {
+                            console.error('Error in event listener:', error);
+                        }
+                    });
+                }
+            }
+
+            once(event, callback) {
+                const wrapper = (data) => {
+                    callback(data);
+                    this.off(event, wrapper);
+                };
+                this.on(event, wrapper);
+            }
+        }
+
+        // Continue with TaskManager in next edit due to length...
+    </script>
 </body>
 </html>
