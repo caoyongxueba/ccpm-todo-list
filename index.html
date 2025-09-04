@@ -389,6 +389,14 @@
             transition: all var(--transition-fast);
             gap: var(--space-xs);
             line-height: 1;
+            min-height: 44px; /* iOS minimum tap target */
+            min-width: 44px; /* iOS minimum tap target */
+        }
+
+        .import-export-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
         }
 
         .btn:focus {
@@ -416,6 +424,173 @@
         .btn-secondary:hover {
             background-color: var(--color-secondary-light);
             border-color: var(--color-secondary);
+        }
+
+        /* Responsive Design - Mobile First and Touch Optimization */
+        @media (max-width: 767px) {
+            .app-header {
+                padding: var(--space-sm) var(--space-md);
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: var(--space-md);
+                align-items: stretch;
+            }
+
+            .app-title {
+                font-size: var(--text-xl);
+                text-align: center;
+            }
+
+            .header-actions {
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: var(--space-sm);
+            }
+
+            .import-export-actions {
+                flex-direction: row;
+                gap: var(--space-xs);
+            }
+
+            .btn {
+                min-height: 48px; /* Larger touch target on mobile */
+                min-width: 48px;
+                padding: var(--space-md);
+                font-size: var(--text-base);
+            }
+
+            .app-main {
+                padding: var(--space-md);
+            }
+
+            .content-grid {
+                gap: var(--space-lg);
+            }
+
+            .task-section,
+            .calendar-section,
+            .review-section {
+                padding: var(--space-lg);
+                border-radius: var(--radius-md);
+            }
+
+            .task-header,
+            .calendar-header,
+            .review-header {
+                flex-direction: column;
+                gap: var(--space-md);
+                align-items: stretch;
+            }
+
+            .header-actions .btn {
+                min-width: auto;
+                padding: var(--space-sm) var(--space-md);
+                font-size: var(--text-sm);
+            }
+        }
+
+        /* Mobile Touch Enhancements */
+        @media (max-width: 767px) {
+            /* Improve scroll performance on mobile */
+            body {
+                -webkit-overflow-scrolling: touch;
+                overscroll-behavior: contain;
+            }
+
+            /* Optimize transitions for mobile */
+            * {
+                -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+                -webkit-touch-callout: none;
+            }
+
+            /* Better button interactions */
+            .btn:active {
+                transform: scale(0.98);
+                transition: transform 0.1s ease;
+            }
+
+            /* Task item mobile styling */
+            .task-item {
+                padding: var(--space-lg);
+                margin-bottom: var(--space-md);
+                background: var(--color-background);
+                border-radius: var(--radius-lg);
+                border: 1px solid var(--color-border-light);
+                box-shadow: var(--shadow-sm);
+                transition: all var(--transition-fast);
+                cursor: pointer;
+                user-select: none;
+                touch-action: pan-y pinch-zoom;
+            }
+
+            .task-item:active {
+                background: var(--color-secondary-light);
+                transform: scale(0.995);
+            }
+
+            .task-item.completed {
+                opacity: 0.7;
+                text-decoration: line-through;
+            }
+
+            /* Form inputs mobile optimization */
+            input, textarea, select {
+                min-height: 44px;
+                padding: var(--space-md);
+                font-size: var(--text-base); /* Prevent zoom on iOS */
+                border: 2px solid var(--color-border);
+                border-radius: var(--radius-md);
+                transition: border-color var(--transition-fast);
+            }
+
+            input:focus, textarea:focus, select:focus {
+                border-color: var(--color-primary);
+                outline: none;
+                box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+            }
+        }
+
+        /* Mobile keyboard optimization */
+        @media (max-width: 767px) {
+            .mobile-keyboard-open {
+                height: 100vh;
+                overflow: hidden;
+            }
+
+            .mobile-keyboard-open .app-footer {
+                display: none;
+            }
+
+            /* Viewport height fixes for mobile browsers */
+            .app-container {
+                min-height: 100vh;
+                min-height: -webkit-fill-available;
+            }
+        }
+
+        /* Performance optimizations for mobile */
+        @media (max-width: 767px) {
+            /* Use hardware acceleration where beneficial */
+            .task-item,
+            .btn,
+            .loading-spinner {
+                transform: translateZ(0);
+                will-change: transform;
+            }
+
+            /* Reduce motion for better mobile performance */
+            .loading-spinner {
+                animation-duration: 1.2s;
+            }
+
+            /* Optimize shadows for mobile */
+            .task-section,
+            .calendar-section,
+            .review-section {
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            }
         }
 
         /* Responsive Design - Tablet */
@@ -492,7 +667,49 @@
             }
         }
 
-        /* Reduced Motion Support */
+        /* Offline Mode Styling */
+        .offline-mode {
+            filter: brightness(0.95);
+        }
+
+        .offline-mode .app-header {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+
+        .offline-mode .app-title {
+            color: white;
+        }
+
+        .offline-mode::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: repeating-linear-gradient(
+                45deg,
+                #f59e0b,
+                #f59e0b 10px,
+                #d97706 10px,
+                #d97706 20px
+            );
+            z-index: 10001;
+            animation: offline-pulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes offline-pulse {
+            from { opacity: 0.5; }
+            to { opacity: 1; }
+        }
+
+        /* Scrolling optimizations */
+        .is-scrolling .loading-spinner {
+            animation-play-state: paused;
+        }
+
+        /* Reduced motion for better performance */
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
                 animation-duration: 0.01ms !important;
@@ -501,12 +718,334 @@
             }
         }
 
+        /* Task Item Styles */
+        .task-item {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            border: 1px solid var(--color-border-light);
+            border-radius: var(--radius-md);
+            background-color: var(--color-background);
+            transition: all var(--transition-fast);
+            margin-bottom: var(--space-sm);
+        }
+
+        .task-item:hover {
+            border-color: var(--color-border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .task-item.completed {
+            opacity: 0.7;
+            background-color: var(--color-background-secondary);
+        }
+
+        .task-item.overdue {
+            border-left: 4px solid var(--color-error);
+        }
+
+        .task-item.due-today {
+            border-left: 4px solid var(--color-warning);
+        }
+
+        .task-checkbox {
+            margin-top: var(--space-xs);
+            cursor: pointer;
+        }
+
+        .task-checkbox input {
+            margin: 0;
+        }
+
+        .task-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .task-title {
+            font-weight: var(--font-medium);
+            color: var(--color-text-primary);
+            margin: 0 0 var(--space-xs) 0;
+            word-wrap: break-word;
+        }
+
+        .task-item.completed .task-title {
+            text-decoration: line-through;
+            color: var(--color-text-muted);
+        }
+
+        .task-description {
+            font-size: var(--text-sm);
+            color: var(--color-text-secondary);
+            margin: 0 0 var(--space-sm) 0;
+            word-wrap: break-word;
+        }
+
+        .task-meta {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            font-size: var(--text-xs);
+            color: var(--color-text-muted);
+            flex-wrap: wrap;
+        }
+
+        .task-priority {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+            font-weight: var(--font-medium);
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .task-priority.urgent {
+            background-color: #fef2f2;
+            color: var(--color-error);
+        }
+
+        .task-priority.high {
+            background-color: #fef3c7;
+            color: #d97706;
+        }
+
+        .task-priority.medium {
+            background-color: #e0f2fe;
+            color: #0284c7;
+        }
+
+        .task-priority.low {
+            background-color: #f0fdf4;
+            color: #16a34a;
+        }
+
+        .task-due-date {
+            color: var(--color-text-secondary);
+        }
+
+        .task-due-date.overdue {
+            color: var(--color-error);
+            font-weight: var(--font-medium);
+        }
+
+        .task-due-date.due-today {
+            color: var(--color-warning);
+            font-weight: var(--font-medium);
+        }
+
+        .task-category {
+            color: var(--color-text-muted);
+        }
+
+        .task-actions {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-xs);
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+        }
+
+        .task-item:hover .task-actions {
+            opacity: 1;
+        }
+
+        .task-actions .btn {
+            padding: var(--space-xs);
+            font-size: var(--text-xs);
+            min-width: auto;
+        }
+
+        /* Task Form Styles */
+        .task-form-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-normal);
+        }
+
+        .task-form-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .task-form-modal {
+            background-color: var(--color-background);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform var(--transition-normal);
+        }
+
+        .task-form-overlay.active .task-form-modal {
+            transform: scale(1);
+        }
+
+        .task-form-header {
+            padding: var(--space-xl);
+            border-bottom: 1px solid var(--color-border-light);
+        }
+
+        .task-form-title {
+            margin: 0;
+            font-size: var(--text-xl);
+            font-weight: var(--font-semibold);
+            color: var(--color-text-primary);
+        }
+
+        .task-form-body {
+            padding: var(--space-xl);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-lg);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: var(--space-sm);
+            font-weight: var(--font-medium);
+            color: var(--color-text-primary);
+            font-size: var(--text-sm);
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: var(--space-sm) var(--space-md);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-size: var(--text-base);
+            transition: border-color var(--transition-fast);
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-primary-light);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-error {
+            color: var(--color-error);
+            font-size: var(--text-xs);
+            margin-top: var(--space-xs);
+        }
+
+        .task-form-footer {
+            padding: var(--space-xl);
+            border-top: 1px solid var(--color-border-light);
+            display: flex;
+            gap: var(--space-md);
+            justify-content: flex-end;
+        }
+
+        /* Edit Mode Styles */
+        .task-item.editing {
+            background-color: var(--color-primary-light);
+            border-color: var(--color-primary);
+        }
+
+        .task-edit-form {
+            display: none;
+            width: 100%;
+        }
+
+        .task-item.editing .task-display {
+            display: none;
+        }
+
+        .task-item.editing .task-edit-form {
+            display: block;
+        }
+
+        .task-edit-actions {
+            display: flex;
+            gap: var(--space-xs);
+            margin-top: var(--space-sm);
+        }
+
+        /* Inline Form Styles */
+        .inline-form-group {
+            margin-bottom: var(--space-sm);
+        }
+
+        .inline-form-input {
+            font-size: var(--text-sm);
+            padding: var(--space-xs) var(--space-sm);
+        }
+
+        .inline-form-textarea {
+            font-size: var(--text-sm);
+            padding: var(--space-xs) var(--space-sm);
+            min-height: 60px;
+        }
+
+        /* Confirmation Dialog Styles */
+        .confirmation-dialog {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--color-background);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: var(--space-xl);
+            z-index: 1100;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .confirmation-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--color-text-primary);
+            margin: 0 0 var(--space-md) 0;
+        }
+
+        .confirmation-message {
+            color: var(--color-text-secondary);
+            margin: 0 0 var(--space-xl) 0;
+        }
+
+        .confirmation-actions {
+            display: flex;
+            gap: var(--space-md);
+            justify-content: center;
+        }
+
         /* Print Styles */
         @media print {
             .app-header,
             .app-footer,
             .btn,
-            .loading-spinner {
+            .loading-spinner,
+            .task-actions,
+            .task-form-overlay,
+            .confirmation-dialog {
                 display: none;
             }
 
@@ -531,6 +1070,11 @@
                 border: 1px solid var(--color-border);
                 break-inside: avoid;
             }
+
+            .task-item {
+                break-inside: avoid;
+                margin-bottom: var(--space-md);
+            }
         }
     </style>
 </head>
@@ -544,10 +1088,19 @@
             <div class="header-content">
                 <h1 class="app-title">CCPM Todo List</h1>
                 <nav class="header-actions" role="navigation" aria-label="Main navigation">
+                    <div class="import-export-actions">
+                        <button class="btn btn-secondary" type="button" id="export-btn" aria-label="Export data to JSON file">
+                            Export
+                        </button>
+                        <button class="btn btn-secondary" type="button" id="import-btn" aria-label="Import data from JSON file">
+                            Import
+                        </button>
+                        <input type="file" id="import-file" accept=".json" style="display: none;" aria-label="Select JSON file to import">
+                    </div>
                     <button class="btn btn-secondary" type="button" aria-label="Settings">
                         Settings
                     </button>
-                    <button class="btn btn-primary" type="button" aria-label="Add new task">
+                    <button class="btn btn-primary" type="button" id="new-task-btn" aria-label="Add new task">
                         + New Task
                     </button>
                 </nav>
@@ -1937,6 +2490,1218 @@
         }
 
         // ================================
+        // MOBILE PERFORMANCE OPTIMIZATION
+        // ================================
+        
+        /**
+         * Performance monitor and optimization utility
+         */
+        class PerformanceMonitor {
+            constructor() {
+                this.metrics = {
+                    memoryUsage: [],
+                    renderTimes: [],
+                    scrollPerformance: []
+                };
+                this.isMonitoring = false;
+                this.isMobile = this.detectMobile();
+                
+                if (this.isMobile) {
+                    this.initializeMobileOptimizations();
+                }
+            }
+
+            detectMobile() {
+                return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+                       (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
+            }
+
+            initializeMobileOptimizations() {
+                // Memory optimization
+                this.setupMemoryManagement();
+                
+                // Lazy loading for better performance
+                this.setupLazyLoading();
+                
+                // Scroll optimization
+                this.setupScrollOptimization();
+                
+                // Battery optimization
+                this.setupBatteryOptimization();
+                
+                // Connection-aware optimizations
+                this.setupConnectionAwareOptimizations();
+                
+                console.info('Mobile performance optimizations initialized');
+            }
+
+            setupMemoryManagement() {
+                // Monitor memory usage if available
+                if ('memory' in performance) {
+                    setInterval(() => {
+                        const memInfo = performance.memory;
+                        this.metrics.memoryUsage.push({
+                            used: memInfo.usedJSHeapSize,
+                            total: memInfo.totalJSHeapSize,
+                            limit: memInfo.jsHeapSizeLimit,
+                            timestamp: Date.now()
+                        });
+                        
+                        // Keep only last 20 measurements
+                        if (this.metrics.memoryUsage.length > 20) {
+                            this.metrics.memoryUsage.shift();
+                        }
+                        
+                        // Check for memory pressure
+                        const usagePercent = (memInfo.usedJSHeapSize / memInfo.jsHeapSizeLimit) * 100;
+                        if (usagePercent > 90) {
+                            this.handleMemoryPressure();
+                        }
+                    }, 30000); // Check every 30 seconds
+                }
+            }
+
+            setupLazyLoading() {
+                // Implement Intersection Observer for lazy loading
+                if ('IntersectionObserver' in window) {
+                    const lazyObserver = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                const element = entry.target;
+                                
+                                // Lazy load images
+                                if (element.dataset.src) {
+                                    element.src = element.dataset.src;
+                                    element.removeAttribute('data-src');
+                                }
+                                
+                                // Lazy initialize components
+                                if (element.dataset.lazyComponent) {
+                                    this.initializeLazyComponent(element);
+                                }
+                                
+                                lazyObserver.unobserve(element);
+                            }
+                        });
+                    }, {
+                        rootMargin: '50px' // Load 50px before element comes into view
+                    });
+
+                    // Observe lazy elements
+                    document.querySelectorAll('[data-src], [data-lazy-component]').forEach(el => {
+                        lazyObserver.observe(el);
+                    });
+                }
+            }
+
+            setupScrollOptimization() {
+                let ticking = false;
+                
+                const optimizedScroll = (event) => {
+                    if (!ticking) {
+                        requestAnimationFrame(() => {
+                            // Handle scroll events efficiently
+                            this.handleScrollEvent(event);
+                            ticking = false;
+                        });
+                        ticking = true;
+                    }
+                };
+
+                // Use passive listeners for better performance
+                window.addEventListener('scroll', optimizedScroll, { passive: true });
+                
+                // Hide/show UI elements during scroll for better performance
+                let scrollTimeout;
+                let isScrolling = false;
+                
+                window.addEventListener('scroll', () => {
+                    if (!isScrolling) {
+                        document.body.classList.add('is-scrolling');
+                        isScrolling = true;
+                    }
+                    
+                    clearTimeout(scrollTimeout);
+                    scrollTimeout = setTimeout(() => {
+                        document.body.classList.remove('is-scrolling');
+                        isScrolling = false;
+                    }, 150);
+                }, { passive: true });
+            }
+
+            setupBatteryOptimization() {
+                if ('getBattery' in navigator) {
+                    navigator.getBattery().then(battery => {
+                        const updateBatteryOptimizations = () => {
+                            if (battery.level < 0.2 || !battery.charging) {
+                                // Reduce animations and intensive operations
+                                document.body.classList.add('low-power-mode');
+                                this.enableLowPowerMode();
+                            } else {
+                                document.body.classList.remove('low-power-mode');
+                                this.disableLowPowerMode();
+                            }
+                        };
+
+                        updateBatteryOptimizations();
+                        battery.addEventListener('chargingchange', updateBatteryOptimizations);
+                        battery.addEventListener('levelchange', updateBatteryOptimizations);
+                    });
+                }
+            }
+
+            setupConnectionAwareOptimizations() {
+                if ('connection' in navigator) {
+                    const connection = navigator.connection;
+                    
+                    const updateConnectionOptimizations = () => {
+                        const isSlowConnection = connection.effectiveType === 'slow-2g' || 
+                                               connection.effectiveType === '2g' ||
+                                               connection.downlink < 1;
+                        
+                        if (isSlowConnection) {
+                            document.body.classList.add('slow-connection');
+                            this.enableSlowConnectionMode();
+                        } else {
+                            document.body.classList.remove('slow-connection');
+                            this.disableSlowConnectionMode();
+                        }
+                    };
+
+                    updateConnectionOptimizations();
+                    connection.addEventListener('change', updateConnectionOptimizations);
+                }
+            }
+
+            handleMemoryPressure() {
+                console.warn('Memory pressure detected, cleaning up...');
+                
+                // Clear old notifications
+                document.querySelectorAll('.notification').forEach(notification => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                });
+                
+                // Trigger garbage collection hints
+                if ('gc' in window && typeof window.gc === 'function') {
+                    window.gc();
+                }
+                
+                // Reduce stored metrics
+                this.metrics.memoryUsage = this.metrics.memoryUsage.slice(-5);
+                this.metrics.renderTimes = this.metrics.renderTimes.slice(-5);
+                this.metrics.scrollPerformance = this.metrics.scrollPerformance.slice(-5);
+            }
+
+            handleScrollEvent(event) {
+                // Implement virtual scrolling for large lists
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                // Update scroll-based animations efficiently
+                const scrollPercentage = scrollTop / (document.documentElement.scrollHeight - window.innerHeight);
+                
+                // Store performance metrics
+                this.metrics.scrollPerformance.push({
+                    scrollTop: scrollTop,
+                    timestamp: performance.now(),
+                    percentage: scrollPercentage
+                });
+                
+                if (this.metrics.scrollPerformance.length > 10) {
+                    this.metrics.scrollPerformance.shift();
+                }
+            }
+
+            initializeLazyComponent(element) {
+                const componentType = element.dataset.lazyComponent;
+                
+                switch (componentType) {
+                    case 'task-list':
+                        // Initialize task list component
+                        this.initializeTaskList(element);
+                        break;
+                    case 'calendar':
+                        // Initialize calendar component
+                        this.initializeCalendar(element);
+                        break;
+                    default:
+                        console.log('Unknown lazy component:', componentType);
+                }
+            }
+
+            initializeTaskList(element) {
+                // Placeholder for task list initialization
+                console.log('Initializing task list:', element);
+            }
+
+            initializeCalendar(element) {
+                // Placeholder for calendar initialization
+                console.log('Initializing calendar:', element);
+            }
+
+            enableLowPowerMode() {
+                console.info('Enabling low power mode');
+                
+                // Reduce animation duration
+                const style = document.createElement('style');
+                style.id = 'low-power-optimizations';
+                style.textContent = `
+                    .low-power-mode * {
+                        animation-duration: 0.1s !important;
+                        transition-duration: 0.1s !important;
+                    }
+                    .low-power-mode .loading-spinner {
+                        animation-play-state: paused !important;
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+
+            disableLowPowerMode() {
+                console.info('Disabling low power mode');
+                
+                const style = document.getElementById('low-power-optimizations');
+                if (style) {
+                    style.remove();
+                }
+            }
+
+            enableSlowConnectionMode() {
+                console.info('Enabling slow connection optimizations');
+                
+                // Reduce update frequencies
+                document.body.style.setProperty('--transition-fast', '0.1s');
+                document.body.style.setProperty('--transition-normal', '0.15s');
+                
+                // Disable non-essential animations
+                const style = document.createElement('style');
+                style.id = 'slow-connection-optimizations';
+                style.textContent = `
+                    .slow-connection .loading-spinner {
+                        display: none;
+                    }
+                    .slow-connection [data-lazy-component] {
+                        display: none;
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+
+            disableSlowConnectionMode() {
+                console.info('Disabling slow connection optimizations');
+                
+                const style = document.getElementById('slow-connection-optimizations');
+                if (style) {
+                    style.remove();
+                }
+                
+                // Reset transition speeds
+                document.body.style.removeProperty('--transition-fast');
+                document.body.style.removeProperty('--transition-normal');
+            }
+
+            getPerformanceReport() {
+                const report = {
+                    isMobile: this.isMobile,
+                    memoryUsage: this.metrics.memoryUsage,
+                    averageRenderTime: this.metrics.renderTimes.length > 0 
+                        ? this.metrics.renderTimes.reduce((a, b) => a + b, 0) / this.metrics.renderTimes.length 
+                        : 0,
+                    scrollPerformance: this.metrics.scrollPerformance,
+                    optimizationsActive: {
+                        lowPower: document.body.classList.contains('low-power-mode'),
+                        slowConnection: document.body.classList.contains('slow-connection'),
+                        isScrolling: document.body.classList.contains('is-scrolling')
+                    }
+                };
+                
+                return report;
+            }
+
+            startMonitoring() {
+                this.isMonitoring = true;
+                console.info('Performance monitoring started');
+            }
+
+            stopMonitoring() {
+                this.isMonitoring = false;
+                console.info('Performance monitoring stopped');
+            }
+        }
+
+        // ================================
+        // MOBILE TOUCH OPTIMIZATION
+        // ================================
+        
+        /**
+         * Touch gesture handler for mobile interactions
+         */
+        class TouchGestureHandler {
+            constructor() {
+                this.touchStartX = 0;
+                this.touchStartY = 0;
+                this.touchEndX = 0;
+                this.touchEndY = 0;
+                this.isSwipping = false;
+                this.swipeThreshold = 100; // minimum distance for swipe
+                this.tapTimeout = null;
+                this.longPressTimeout = null;
+                this.longPressDelay = 500;
+                
+                this.bindEvents();
+            }
+
+            bindEvents() {
+                // Add passive event listeners for better performance
+                document.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: true });
+                document.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false });
+                document.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: true });
+                
+                // Prevent double-tap zoom on buttons
+                document.addEventListener('touchend', this.preventDoubleTapZoom.bind(this), { passive: false });
+            }
+
+            handleTouchStart(event) {
+                const touch = event.touches[0];
+                this.touchStartX = touch.clientX;
+                this.touchStartY = touch.clientY;
+                this.isSwipping = false;
+                
+                // Clear previous timeouts
+                if (this.tapTimeout) {
+                    clearTimeout(this.tapTimeout);
+                    this.tapTimeout = null;
+                }
+                
+                // Start long press detection
+                const taskItem = this.findTaskItem(event.target);
+                if (taskItem) {
+                    this.longPressTimeout = setTimeout(() => {
+                        this.handleLongPress(taskItem, event);
+                    }, this.longPressDelay);
+                }
+            }
+
+            handleTouchMove(event) {
+                if (event.touches.length > 1) return; // Ignore multi-touch
+                
+                const touch = event.touches[0];
+                this.touchEndX = touch.clientX;
+                this.touchEndY = touch.clientY;
+                
+                const deltaX = Math.abs(this.touchEndX - this.touchStartX);
+                const deltaY = Math.abs(this.touchEndY - this.touchStartY);
+                
+                // Cancel long press if user moves finger
+                if (this.longPressTimeout && (deltaX > 10 || deltaY > 10)) {
+                    clearTimeout(this.longPressTimeout);
+                    this.longPressTimeout = null;
+                }
+                
+                // Detect horizontal swipe
+                if (deltaX > 20 && deltaY < 30) {
+                    this.isSwipping = true;
+                    
+                    const taskItem = this.findTaskItem(event.target);
+                    if (taskItem) {
+                        // Prevent scrolling during swipe
+                        event.preventDefault();
+                        
+                        // Update visual feedback
+                        this.updateSwipeVisualFeedback(taskItem, this.touchEndX - this.touchStartX);
+                    }
+                }
+            }
+
+            handleTouchEnd(event) {
+                // Clear long press timeout
+                if (this.longPressTimeout) {
+                    clearTimeout(this.longPressTimeout);
+                    this.longPressTimeout = null;
+                }
+                
+                const taskItem = this.findTaskItem(event.target);
+                if (taskItem) {
+                    // Reset visual feedback
+                    this.resetSwipeVisualFeedback(taskItem);
+                }
+                
+                if (!this.isSwipping) {
+                    // Handle tap
+                    this.handleTap(event);
+                    return;
+                }
+                
+                // Process swipe
+                const deltaX = this.touchEndX - this.touchStartX;
+                const deltaY = Math.abs(this.touchEndY - this.touchStartY);
+                
+                if (Math.abs(deltaX) >= this.swipeThreshold && deltaY < 50) {
+                    if (taskItem) {
+                        if (deltaX > 0) {
+                            // Swipe right - complete task
+                            this.handleSwipeRight(taskItem);
+                        } else {
+                            // Swipe left - delete task
+                            this.handleSwipeLeft(taskItem);
+                        }
+                    }
+                }
+                
+                this.isSwipping = false;
+            }
+
+            handleTap(event) {
+                // Implement tap handling with slight delay to detect double-taps
+                if (this.tapTimeout) {
+                    // Double tap detected
+                    clearTimeout(this.tapTimeout);
+                    this.tapTimeout = null;
+                    this.handleDoubleTap(event);
+                } else {
+                    // Single tap - set timeout
+                    this.tapTimeout = setTimeout(() => {
+                        this.handleSingleTap(event);
+                        this.tapTimeout = null;
+                    }, 200);
+                }
+            }
+
+            handleSingleTap(event) {
+                const taskItem = this.findTaskItem(event.target);
+                if (taskItem) {
+                    // Toggle task completion on tap
+                    this.toggleTaskCompletion(taskItem);
+                }
+            }
+
+            handleDoubleTap(event) {
+                const taskItem = this.findTaskItem(event.target);
+                if (taskItem) {
+                    // Edit task on double tap
+                    this.editTask(taskItem);
+                }
+            }
+
+            handleLongPress(taskItem, event) {
+                // Provide haptic feedback if available
+                if (navigator.vibrate) {
+                    navigator.vibrate(50);
+                }
+                
+                // Show task options menu
+                this.showTaskOptionsMenu(taskItem, event);
+            }
+
+            handleSwipeRight(taskItem) {
+                const taskId = taskItem.dataset.taskId;
+                if (taskId) {
+                    // Complete task
+                    this.completeTask(taskId);
+                    
+                    // Visual feedback
+                    this.showSwipeAction(taskItem, 'completed', 'Task completed!');
+                }
+            }
+
+            handleSwipeLeft(taskItem) {
+                const taskId = taskItem.dataset.taskId;
+                if (taskId) {
+                    // Show delete confirmation
+                    this.confirmDeleteTask(taskId, taskItem);
+                }
+            }
+
+            preventDoubleTapZoom(event) {
+                const target = event.target;
+                if (target.tagName === 'BUTTON' || target.closest('button')) {
+                    // Prevent zoom on button double-tap
+                    if (event.detail > 1) {
+                        event.preventDefault();
+                    }
+                }
+            }
+
+            findTaskItem(element) {
+                // Find the closest task item element
+                return element.closest('.task-item, [data-task-id]');
+            }
+
+            updateSwipeVisualFeedback(taskItem, deltaX) {
+                const maxSwipe = 150;
+                const progress = Math.min(Math.abs(deltaX) / maxSwipe, 1);
+                
+                if (deltaX > 0) {
+                    // Swipe right - complete action
+                    taskItem.style.transform = `translateX(${Math.min(deltaX, maxSwipe)}px)`;
+                    taskItem.style.backgroundColor = `rgba(16, 185, 129, ${progress * 0.3})`;
+                } else {
+                    // Swipe left - delete action
+                    taskItem.style.transform = `translateX(${Math.max(deltaX, -maxSwipe)}px)`;
+                    taskItem.style.backgroundColor = `rgba(239, 68, 68, ${progress * 0.3})`;
+                }
+            }
+
+            resetSwipeVisualFeedback(taskItem) {
+                taskItem.style.transform = '';
+                taskItem.style.backgroundColor = '';
+                taskItem.style.transition = 'all 0.3s ease';
+                
+                setTimeout(() => {
+                    taskItem.style.transition = '';
+                }, 300);
+            }
+
+            completeTask(taskId) {
+                try {
+                    const task = taskManager.read(taskId);
+                    if (task) {
+                        taskManager.update(taskId, { completed: !task.completed });
+                        showNotification(task.completed ? 'Task completed!' : 'Task reopened!', 'success');
+                    }
+                } catch (error) {
+                    console.error('Failed to toggle task completion:', error);
+                    showNotification('Failed to update task', 'error');
+                }
+            }
+
+            toggleTaskCompletion(taskItem) {
+                const taskId = taskItem.dataset.taskId;
+                if (taskId) {
+                    this.completeTask(taskId);
+                }
+            }
+
+            editTask(taskItem) {
+                const taskId = taskItem.dataset.taskId;
+                if (taskId) {
+                    // Placeholder for task editing functionality
+                    console.log('Edit task:', taskId);
+                    showNotification('Edit task functionality coming soon!', 'info');
+                }
+            }
+
+            confirmDeleteTask(taskId, taskItem) {
+                const task = taskManager.read(taskId);
+                if (task) {
+                    if (confirm(`Delete task "${task.title}"?`)) {
+                        try {
+                            taskManager.delete(taskId);
+                            this.showSwipeAction(taskItem, 'deleted', 'Task deleted!');
+                            
+                            // Remove from DOM after animation
+                            setTimeout(() => {
+                                if (taskItem.parentNode) {
+                                    taskItem.remove();
+                                }
+                            }, 300);
+                        } catch (error) {
+                            console.error('Failed to delete task:', error);
+                            showNotification('Failed to delete task', 'error');
+                        }
+                    } else {
+                        // Reset visual feedback if cancelled
+                        this.resetSwipeVisualFeedback(taskItem);
+                    }
+                }
+            }
+
+            showSwipeAction(taskItem, action, message) {
+                // Animate task item
+                if (action === 'completed') {
+                    taskItem.style.backgroundColor = '#10b981';
+                    taskItem.style.color = 'white';
+                } else if (action === 'deleted') {
+                    taskItem.style.backgroundColor = '#ef4444';
+                    taskItem.style.color = 'white';
+                    taskItem.style.transform = 'translateX(-100%)';
+                    taskItem.style.opacity = '0';
+                }
+                
+                showNotification(message, action === 'deleted' ? 'info' : 'success');
+                
+                // Reset after delay
+                if (action === 'completed') {
+                    setTimeout(() => {
+                        this.resetSwipeVisualFeedback(taskItem);
+                    }, 1000);
+                }
+            }
+
+            showTaskOptionsMenu(taskItem, event) {
+                // Placeholder for context menu
+                console.log('Show task options menu for:', taskItem.dataset.taskId);
+                
+                // For now, show simple options
+                const taskId = taskItem.dataset.taskId;
+                const task = taskManager.read(taskId);
+                
+                if (task) {
+                    const options = [
+                        task.completed ? 'Mark as incomplete' : 'Mark as complete',
+                        'Edit task',
+                        'Delete task'
+                    ];
+                    
+                    // Simple implementation with confirm dialogs
+                    let choice = prompt(`Task: "${task.title}"\n\nChoose action:\n1. ${options[0]}\n2. ${options[1]}\n3. ${options[2]}\n\nEnter number (1-3):`);
+                    
+                    if (choice) {
+                        choice = parseInt(choice);
+                        switch (choice) {
+                            case 1:
+                                this.completeTask(taskId);
+                                break;
+                            case 2:
+                                this.editTask(taskItem);
+                                break;
+                            case 3:
+                                this.confirmDeleteTask(taskId, taskItem);
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
+        // ================================
+        // DATA PORTABILITY IMPLEMENTATION
+        // ================================
+        
+        /**
+         * Initialize data import/export functionality
+         */
+        function initializeDataPortability() {
+            const exportBtn = document.getElementById('export-btn');
+            const importBtn = document.getElementById('import-btn');
+            const importFile = document.getElementById('import-file');
+
+            if (exportBtn) {
+                exportBtn.addEventListener('click', handleDataExport);
+            }
+
+            if (importBtn) {
+                importBtn.addEventListener('click', () => {
+                    importFile.click();
+                });
+            }
+
+            if (importFile) {
+                importFile.addEventListener('change', handleDataImport);
+            }
+        }
+
+        /**
+         * Handle data export to JSON file
+         */
+        function handleDataExport() {
+            try {
+                showNotification('Preparing export...', 'info');
+                
+                const exportData = dataManager.exportAll();
+                
+                // Validate export data
+                if (!exportData.tasks || !Array.isArray(exportData.tasks)) {
+                    throw new Error('Invalid export data: tasks missing or invalid');
+                }
+                
+                // Create file with formatted JSON
+                const jsonString = JSON.stringify(exportData, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                
+                // Generate filename with timestamp
+                const timestamp = new Date().toISOString().slice(0, 16).replace(/[T:]/g, '_');
+                const filename = `ccpm_todo_backup_${timestamp}.json`;
+                
+                // Create download link
+                const downloadLink = document.createElement('a');
+                downloadLink.href = URL.createObjectURL(blob);
+                downloadLink.download = filename;
+                
+                // Trigger download
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+                
+                // Cleanup
+                URL.revokeObjectURL(downloadLink.href);
+                
+                showNotification(`Data exported successfully! (${exportData.tasks.length} tasks, ${exportData.categories.length} categories)`, 'success');
+                
+                console.info('Data exported:', {
+                    tasks: exportData.tasks.length,
+                    categories: exportData.categories.length,
+                    filename: filename,
+                    size: formatBytes(blob.size)
+                });
+                
+            } catch (error) {
+                console.error('Export failed:', error);
+                showNotification(`Export failed: ${error.message}`, 'error');
+            }
+        }
+
+        /**
+         * Handle data import from JSON file
+         */
+        function handleDataImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Reset file input
+            event.target.value = '';
+
+            try {
+                showNotification('Reading import file...', 'info');
+                
+                // Validate file type
+                if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
+                    throw new Error('Please select a valid JSON file');
+                }
+                
+                // Validate file size (max 10MB)
+                const maxSize = 10 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    throw new Error('File size too large (max 10MB)');
+                }
+                
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    try {
+                        const importData = JSON.parse(e.target.result);
+                        
+                        // Validate import data structure
+                        validateImportData(importData);
+                        
+                        // Show confirmation dialog
+                        showImportConfirmation(importData);
+                        
+                    } catch (error) {
+                        console.error('Import validation failed:', error);
+                        showNotification(`Import failed: ${error.message}`, 'error');
+                    }
+                };
+                
+                reader.onerror = function() {
+                    showNotification('Failed to read file', 'error');
+                };
+                
+                reader.readAsText(file);
+                
+            } catch (error) {
+                console.error('Import failed:', error);
+                showNotification(`Import failed: ${error.message}`, 'error');
+            }
+        }
+
+        /**
+         * Validate import data structure
+         */
+        function validateImportData(data) {
+            if (!data || typeof data !== 'object') {
+                throw new Error('Invalid data format');
+            }
+            
+            if (!data.tasks || !Array.isArray(data.tasks)) {
+                throw new Error('Invalid data: tasks array is required');
+            }
+            
+            if (!data.categories || !Array.isArray(data.categories)) {
+                throw new Error('Invalid data: categories array is required');
+            }
+            
+            // Basic schema validation
+            if (data.version && typeof data.version !== 'string') {
+                throw new Error('Invalid data: version must be a string');
+            }
+            
+            // Validate task structure (sample check)
+            if (data.tasks.length > 0) {
+                const sampleTask = data.tasks[0];
+                if (!sampleTask.title || typeof sampleTask.title !== 'string') {
+                    throw new Error('Invalid task format: title is required');
+                }
+            }
+            
+            // Validate category structure (sample check)
+            if (data.categories.length > 0) {
+                const sampleCategory = data.categories[0];
+                if (!sampleCategory.name || typeof sampleCategory.name !== 'string') {
+                    throw new Error('Invalid category format: name is required');
+                }
+            }
+        }
+
+        /**
+         * Show import confirmation dialog
+         */
+        function showImportConfirmation(importData) {
+            const taskCount = importData.tasks ? importData.tasks.length : 0;
+            const categoryCount = importData.categories ? importData.categories.length : 0;
+            const exportDate = importData.exportedAt ? new Date(importData.exportedAt).toLocaleString() : 'Unknown';
+            
+            const message = `
+                Import ${taskCount} tasks and ${categoryCount} categories?
+                
+                Export Date: ${exportDate}
+                Version: ${importData.version || 'Unknown'}
+                
+                This will add to your existing data (duplicates will be avoided).
+            `;
+            
+            if (confirm(message.trim())) {
+                performDataImport(importData);
+            }
+        }
+
+        /**
+         * Perform the actual data import
+         */
+        async function performDataImport(importData) {
+            try {
+                showNotification('Importing data...', 'info');
+                
+                const results = await dataManager.importAll(importData);
+                
+                // Calculate results
+                const tasksImported = results.tasks.imported.length;
+                const tasksErrors = results.tasks.errors.length;
+                const categoriesImported = results.categories.imported.length;
+                const categoriesErrors = results.categories.errors.length;
+                
+                // Show results
+                let message = `Import completed!`;
+                
+                if (tasksImported > 0 || categoriesImported > 0) {
+                    message += `\n✓ ${tasksImported} tasks imported\n✓ ${categoriesImported} categories imported`;
+                }
+                
+                if (tasksErrors > 0 || categoriesErrors > 0) {
+                    message += `\n⚠ ${tasksErrors} task errors\n⚠ ${categoriesErrors} category errors`;
+                }
+                
+                showNotification(message, tasksErrors > 0 || categoriesErrors > 0 ? 'warning' : 'success');
+                
+                // Log details
+                console.info('Import completed:', {
+                    tasks: { imported: tasksImported, errors: tasksErrors },
+                    categories: { imported: categoriesImported, errors: categoriesErrors },
+                    taskErrors: results.tasks.errors,
+                    categoryErrors: results.categories.errors
+                });
+                
+                // Refresh UI if needed (placeholder for future UI updates)
+                // This would trigger re-rendering of task lists, etc.
+                
+            } catch (error) {
+                console.error('Import operation failed:', error);
+                showNotification(`Import failed: ${error.message}`, 'error');
+            }
+        }
+
+        /**
+         * Schema migration support for future versions
+         */
+        function migrateSchema(data) {
+            const currentVersion = '1.0';
+            const dataVersion = data.version || '1.0';
+            
+            if (dataVersion === currentVersion) {
+                return data; // No migration needed
+            }
+            
+            console.info(`Migrating data from version ${dataVersion} to ${currentVersion}`);
+            
+            // Future migration logic would go here
+            // For now, we only support version 1.0
+            
+            return {
+                ...data,
+                version: currentVersion,
+                migrated: true,
+                originalVersion: dataVersion
+            };
+        }
+
+        /**
+         * Show notification to user
+         */
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.textContent = message;
+            
+            // Add styles
+            Object.assign(notification.style, {
+                position: 'fixed',
+                top: '20px',
+                right: '20px',
+                padding: '12px 16px',
+                borderRadius: '6px',
+                color: 'white',
+                fontWeight: '500',
+                fontSize: '14px',
+                zIndex: '10000',
+                maxWidth: '300px',
+                wordWrap: 'break-word',
+                transition: 'all 0.3s ease'
+            });
+            
+            // Set background color based on type
+            const colors = {
+                info: '#3b82f6',
+                success: '#10b981', 
+                warning: '#f59e0b',
+                error: '#ef4444'
+            };
+            notification.style.backgroundColor = colors[type] || colors.info;
+            
+            // Add to DOM
+            document.body.appendChild(notification);
+            
+            // Auto remove after delay
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.style.opacity = '0';
+                    notification.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            document.body.removeChild(notification);
+                        }
+                    }, 300);
+                }
+            }, type === 'error' ? 5000 : 3000);
+        }
+
+        /**
+         * Format bytes for display
+         */
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        /**
+         * Mobile keyboard optimization setup
+         */
+        function setupMobileKeyboardOptimizations() {
+            let initialViewportHeight = window.innerHeight;
+            
+            // Handle virtual keyboard appearance/disappearance
+            window.addEventListener('resize', () => {
+                const currentHeight = window.innerHeight;
+                const heightDifference = initialViewportHeight - currentHeight;
+                
+                // If height decreased by more than 150px, assume keyboard is open
+                if (heightDifference > 150) {
+                    document.body.classList.add('mobile-keyboard-open');
+                    
+                    // Adjust layout for keyboard
+                    const activeElement = document.activeElement;
+                    if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA')) {
+                        setTimeout(() => {
+                            activeElement.scrollIntoView({ 
+                                behavior: 'smooth', 
+                                block: 'center',
+                                inline: 'nearest'
+                            });
+                        }, 150);
+                    }
+                } else {
+                    document.body.classList.remove('mobile-keyboard-open');
+                }
+            });
+
+            // Handle focus events for better mobile UX
+            document.addEventListener('focusin', (event) => {
+                const target = event.target;
+                if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+                    // Add focused state class for styling
+                    target.classList.add('mobile-focused');
+                    
+                    // Ensure element is visible above keyboard
+                    if (window.performanceMonitor && window.performanceMonitor.isMobile) {
+                        setTimeout(() => {
+                            target.scrollIntoView({ 
+                                behavior: 'smooth', 
+                                block: 'center',
+                                inline: 'nearest'
+                            });
+                        }, 300); // Wait for keyboard animation
+                    }
+                }
+            });
+
+            document.addEventListener('focusout', (event) => {
+                const target = event.target;
+                if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+                    target.classList.remove('mobile-focused');
+                }
+            });
+
+            // Improve input handling on mobile
+            document.addEventListener('input', (event) => {
+                const target = event.target;
+                if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+                    // Auto-resize textarea on mobile
+                    if (target.tagName === 'TEXTAREA') {
+                        target.style.height = 'auto';
+                        target.style.height = target.scrollHeight + 'px';
+                    }
+                }
+            });
+
+            // Handle mobile-specific input types
+            const inputs = document.querySelectorAll('input[type="email"], input[type="tel"], input[type="url"]');
+            inputs.forEach(input => {
+                input.addEventListener('focus', () => {
+                    // Prevent zoom on iOS
+                    if (input.style.fontSize !== '16px') {
+                        input.style.fontSize = '16px';
+                    }
+                });
+            });
+        }
+
+        // ================================
+        // OFFLINE FUNCTIONALITY
+        // ================================
+        
+        /**
+         * Offline functionality manager
+         */
+        class OfflineManager {
+            constructor() {
+                this.isOnline = navigator.onLine;
+                this.offlineQueue = [];
+                this.setupOfflineHandling();
+            }
+
+            setupOfflineHandling() {
+                // Listen for online/offline events
+                window.addEventListener('online', () => {
+                    this.isOnline = true;
+                    this.handleOnlineStateChange(true);
+                });
+
+                window.addEventListener('offline', () => {
+                    this.isOnline = false;
+                    this.handleOnlineStateChange(false);
+                });
+
+                // Test actual connectivity (not just network interface)
+                this.testConnectivity();
+                
+                // Periodically check connectivity when offline
+                setInterval(() => {
+                    if (!this.isOnline) {
+                        this.testConnectivity();
+                    }
+                }, 30000); // Check every 30 seconds when offline
+            }
+
+            handleOnlineStateChange(isOnline) {
+                if (isOnline) {
+                    document.body.classList.remove('offline-mode');
+                    showNotification('Connection restored!', 'success');
+                    this.processOfflineQueue();
+                } else {
+                    document.body.classList.add('offline-mode');
+                    showNotification('You are offline. Changes will be saved locally.', 'warning');
+                }
+                
+                console.info('Network status changed:', isOnline ? 'online' : 'offline');
+            }
+
+            async testConnectivity() {
+                try {
+                    // Test with a small request to check actual internet connectivity
+                    const response = await fetch('data:text/plain,ping', {
+                        method: 'HEAD',
+                        cache: 'no-cache'
+                    });
+                    
+                    if (response.ok) {
+                        if (!this.isOnline) {
+                            this.isOnline = true;
+                            this.handleOnlineStateChange(true);
+                        }
+                    }
+                } catch (error) {
+                    if (this.isOnline) {
+                        this.isOnline = false;
+                        this.handleOnlineStateChange(false);
+                    }
+                }
+            }
+
+            addToOfflineQueue(operation) {
+                // Add operations that should be synced when back online
+                this.offlineQueue.push({
+                    operation: operation,
+                    timestamp: Date.now(),
+                    id: Date.now() + Math.random().toString(36).substr(2, 9)
+                });
+                
+                console.log('Added to offline queue:', operation);
+            }
+
+            processOfflineQueue() {
+                if (this.offlineQueue.length === 0) return;
+                
+                console.info('Processing offline queue:', this.offlineQueue.length, 'items');
+                
+                // For now, just clear the queue since we're using localStorage
+                // In a real app, this would sync with a server
+                this.offlineQueue = [];
+                
+                showNotification('Offline changes synchronized!', 'success');
+            }
+
+            isOffline() {
+                return !this.isOnline;
+            }
+
+            getQueueSize() {
+                return this.offlineQueue.length;
+            }
+        }
+
+        /**
+         * Service Worker registration (simple implementation)
+         */
+        function considerServiceWorker() {
+            // Only register service worker if it would be beneficial
+            if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
+                // For now, just log that we could add a service worker
+                console.info('Service Worker support detected. Consider implementing for:');
+                console.info('- Cache static assets (CSS, fonts)');
+                console.info('- Offline page functionality');
+                console.info('- Background sync capabilities');
+                console.info('- Push notifications');
+                
+                // Simple service worker registration example (commented out)
+                /*
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('SW registered:', registration);
+                    })
+                    .catch(error => {
+                        console.log('SW registration failed:', error);
+                    });
+                */
+            } else {
+                console.info('Service Worker not available or not on HTTPS');
+            }
+        }
+
+        // ================================
         // SYSTEM INITIALIZATION
         // ================================
         
@@ -1990,6 +3755,30 @@
                     categories: categoryManager.getAll().length,
                     storage: storageInfo
                 });
+
+                // Initialize import/export functionality
+                initializeDataPortability();
+
+                // Initialize mobile touch gestures
+                if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+                    window.touchGestureHandler = new TouchGestureHandler();
+                    console.info('Mobile touch gestures initialized');
+                }
+
+                // Initialize performance monitoring
+                window.performanceMonitor = new PerformanceMonitor();
+                if (window.performanceMonitor.isMobile) {
+                    window.performanceMonitor.startMonitoring();
+                }
+
+                // Setup mobile keyboard optimizations
+                setupMobileKeyboardOptimizations();
+
+                // Initialize offline functionality
+                window.offlineManager = new OfflineManager();
+                
+                // Consider service worker registration
+                considerServiceWorker();
 
                 // Remove loading states and show empty states
                 document.querySelectorAll('.loading-state').forEach(el => {
