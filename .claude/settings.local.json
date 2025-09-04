@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(/C:\\Users\\cyxueba\\Desktop\\ccpm\\.claude\\epics/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
