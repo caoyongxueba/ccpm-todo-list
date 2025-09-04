@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Read(/C:\\Users\\cyxueba\\Desktop\\ccpm\\.claude\\epics/**)"
+      "Read(/C:\\Users\\cyxueba\\Desktop\\ccpm\\.claude\\epics/**)",
+      "Read(/C:\\Users\\cyxueba\\Desktop\\ccpm/**)",
+      "Read(/C:\\Users\\cyxueba\\Desktop\\ccpm/**)"
     ],
     "deny": [],
     "ask": []
