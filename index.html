@@ -1145,7 +1145,872 @@
             }
         }
 
-        // Continue with TaskManager in next edit due to length...
+        // ================================
+        // TASK MANAGER
+        // ================================
+        
+        /**
+         * TaskManager class for handling all task operations with localStorage sync
+         */
+        class TaskManager extends DataEventEmitter {
+            constructor() {
+                super();
+                this.storage = new StorageManager();
+                this.tasks = new Map();
+                this.initialized = false;
+                this.batchUpdateTimeout = null;
+                this.loadTasks();
+            }
+
+            // ================================
+            // INITIALIZATION
+            // ================================
+
+            async loadTasks() {
+                try {
+                    const data = this.storage.load();
+                    if (data && Array.isArray(data.tasks)) {
+                        this.tasks.clear();
+                        data.tasks.forEach(taskData => {
+                            try {
+                                const task = new Task(taskData);
+                                this.tasks.set(task.id, task);
+                            } catch (error) {
+                                console.warn('Skipping invalid task:', taskData.id, error.message);
+                            }
+                        });
+                    }
+                    this.initialized = true;
+                    this.emit('tasksLoaded', { count: this.tasks.size });
+                } catch (error) {
+                    console.error('Failed to load tasks:', error);
+                    this.emit('loadError', error);
+                }
+            }
+
+            // ================================
+            // CRUD OPERATIONS
+            // ================================
+
+            create(taskData) {
+                try {
+                    const task = new Task(taskData);
+                    this.tasks.set(task.id, task);
+                    this._scheduleSave();
+                    this.emit('taskCreated', task);
+                    return task;
+                } catch (error) {
+                    console.error('Failed to create task:', error);
+                    throw error;
+                }
+            }
+
+            read(id) {
+                return this.tasks.get(id) || null;
+            }
+
+            update(id, data) {
+                const task = this.tasks.get(id);
+                if (!task) {
+                    throw new Error(`Task with id ${id} not found`);
+                }
+
+                try {
+                    task.update(data);
+                    this._scheduleSave();
+                    this.emit('taskUpdated', task);
+                    return task;
+                } catch (error) {
+                    console.error('Failed to update task:', error);
+                    throw error;
+                }
+            }
+
+            delete(id) {
+                const task = this.tasks.get(id);
+                if (!task) {
+                    throw new Error(`Task with id ${id} not found`);
+                }
+
+                // Delete subtasks first
+                const subtasks = this.findByParentId(id);
+                subtasks.forEach(subtask => {
+                    this.tasks.delete(subtask.id);
+                });
+
+                this.tasks.delete(id);
+                this._scheduleSave();
+                this.emit('taskDeleted', { id, task, subtaskCount: subtasks.length });
+                return true;
+            }
+
+            // ================================
+            // QUERY OPERATIONS
+            // ================================
+
+            getAll() {
+                return Array.from(this.tasks.values());
+            }
+
+            find(predicate) {
+                return Array.from(this.tasks.values()).filter(predicate);
+            }
+
+            findById(id) {
+                return this.read(id);
+            }
+
+            findByCategory(categoryId) {
+                return this.find(task => task.category === categoryId);
+            }
+
+            findByParentId(parentId) {
+                return this.find(task => task.parentTaskId === parentId);
+            }
+
+            findByTag(tag) {
+                return this.find(task => task.tags.includes(tag));
+            }
+
+            findCompleted() {
+                return this.find(task => task.completed);
+            }
+
+            findPending() {
+                return this.find(task => !task.completed);
+            }
+
+            findOverdue() {
+                return this.find(task => task.isOverdue());
+            }
+
+            findDueToday() {
+                const today = new Date().toISOString().split('T')[0];
+                return this.find(task => {
+                    return task.dueDate && task.dueDate.split('T')[0] === today;
+                });
+            }
+
+            findDueSoon(days = 7) {
+                const futureDate = new Date();
+                futureDate.setDate(futureDate.getDate() + days);
+                
+                return this.find(task => {
+                    if (!task.dueDate || task.completed) return false;
+                    const dueDate = new Date(task.dueDate);
+                    return dueDate <= futureDate;
+                });
+            }
+
+            // ================================
+            // SEARCH OPERATIONS
+            // ================================
+
+            search(query) {
+                if (!query || query.trim().length === 0) {
+                    return this.getAll();
+                }
+
+                const searchTerm = query.toLowerCase().trim();
+                return this.find(task => {
+                    return task.title.toLowerCase().includes(searchTerm) ||
+                           task.description.toLowerCase().includes(searchTerm) ||
+                           task.tags.some(tag => tag.toLowerCase().includes(searchTerm));
+                });
+            }
+
+            // ================================
+            // FILTER OPERATIONS
+            // ================================
+
+            filter(filters) {
+                let results = this.getAll();
+
+                if (filters.completed !== undefined) {
+                    results = results.filter(task => task.completed === filters.completed);
+                }
+
+                if (filters.category) {
+                    results = results.filter(task => task.category === filters.category);
+                }
+
+                if (filters.priority) {
+                    const priorities = Array.isArray(filters.priority) ? filters.priority : [filters.priority];
+                    results = results.filter(task => priorities.includes(task.priority));
+                }
+
+                if (filters.tags && filters.tags.length > 0) {
+                    results = results.filter(task => 
+                        filters.tags.some(tag => task.tags.includes(tag))
+                    );
+                }
+
+                if (filters.dueDateStart) {
+                    results = results.filter(task => 
+                        task.dueDate && new Date(task.dueDate) >= new Date(filters.dueDateStart)
+                    );
+                }
+
+                if (filters.dueDateEnd) {
+                    results = results.filter(task => 
+                        task.dueDate && new Date(task.dueDate) <= new Date(filters.dueDateEnd)
+                    );
+                }
+
+                if (filters.createdAfter) {
+                    results = results.filter(task => 
+                        new Date(task.createdAt) >= new Date(filters.createdAfter)
+                    );
+                }
+
+                return results;
+            }
+
+            // ================================
+            // SORT OPERATIONS
+            // ================================
+
+            sort(tasks, sortBy = 'createdAt', sortOrder = 'desc') {
+                const sortedTasks = [...tasks];
+                
+                const sortFunctions = {
+                    title: (a, b) => a.title.localeCompare(b.title),
+                    priority: (a, b) => {
+                        const priorityOrder = { urgent: 4, high: 3, medium: 2, low: 1 };
+                        return priorityOrder[b.priority] - priorityOrder[a.priority];
+                    },
+                    dueDate: (a, b) => {
+                        if (!a.dueDate && !b.dueDate) return 0;
+                        if (!a.dueDate) return 1;
+                        if (!b.dueDate) return -1;
+                        return new Date(a.dueDate) - new Date(b.dueDate);
+                    },
+                    createdAt: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
+                    updatedAt: (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt),
+                    order: (a, b) => a.order - b.order
+                };
+
+                const sortFunction = sortFunctions[sortBy] || sortFunctions.createdAt;
+                sortedTasks.sort(sortFunction);
+
+                if (sortOrder === 'desc') {
+                    sortedTasks.reverse();
+                }
+
+                return sortedTasks;
+            }
+
+            // ================================
+            // BULK OPERATIONS
+            // ================================
+
+            bulkUpdate(taskIds, updateData) {
+                const updatedTasks = [];
+                const errors = [];
+
+                taskIds.forEach(id => {
+                    try {
+                        const task = this.update(id, updateData);
+                        updatedTasks.push(task);
+                    } catch (error) {
+                        errors.push({ id, error: error.message });
+                    }
+                });
+
+                this.emit('bulkUpdateCompleted', { 
+                    updated: updatedTasks, 
+                    errors,
+                    count: updatedTasks.length 
+                });
+
+                return { updated: updatedTasks, errors };
+            }
+
+            bulkDelete(taskIds) {
+                const deletedTasks = [];
+                const errors = [];
+
+                taskIds.forEach(id => {
+                    try {
+                        this.delete(id);
+                        deletedTasks.push(id);
+                    } catch (error) {
+                        errors.push({ id, error: error.message });
+                    }
+                });
+
+                this.emit('bulkDeleteCompleted', { 
+                    deleted: deletedTasks, 
+                    errors,
+                    count: deletedTasks.length 
+                });
+
+                return { deleted: deletedTasks, errors };
+            }
+
+            // ================================
+            // STORAGE OPERATIONS
+            // ================================
+
+            _scheduleSave() {
+                // Debounce saves to avoid excessive localStorage writes
+                if (this.batchUpdateTimeout) {
+                    clearTimeout(this.batchUpdateTimeout);
+                }
+
+                this.batchUpdateTimeout = setTimeout(() => {
+                    this.save();
+                }, 100); // 100ms delay
+            }
+
+            save() {
+                try {
+                    const data = {
+                        tasks: Array.from(this.tasks.values()).map(task => task.toJSON()),
+                        version: '1.0',
+                        timestamp: new Date().toISOString()
+                    };
+
+                    this.storage.save(data);
+                    this.emit('tasksSaved', { count: this.tasks.size });
+                    return true;
+                } catch (error) {
+                    console.error('Failed to save tasks:', error);
+                    this.emit('saveError', error);
+                    return false;
+                }
+            }
+
+            // ================================
+            // STATISTICS
+            // ================================
+
+            getStats() {
+                const tasks = this.getAll();
+                const completed = tasks.filter(task => task.completed);
+                const pending = tasks.filter(task => !task.completed);
+                const overdue = tasks.filter(task => task.isOverdue());
+
+                const priorityStats = {
+                    urgent: tasks.filter(task => task.priority === 'urgent').length,
+                    high: tasks.filter(task => task.priority === 'high').length,
+                    medium: tasks.filter(task => task.priority === 'medium').length,
+                    low: tasks.filter(task => task.priority === 'low').length
+                };
+
+                return {
+                    total: tasks.length,
+                    completed: completed.length,
+                    pending: pending.length,
+                    overdue: overdue.length,
+                    completionRate: tasks.length > 0 ? Math.round((completed.length / tasks.length) * 100) : 0,
+                    priorityBreakdown: priorityStats
+                };
+            }
+
+            // ================================
+            // UTILITY METHODS
+            // ================================
+
+            clear() {
+                this.tasks.clear();
+                this.storage.clear();
+                this.emit('tasksCleared');
+            }
+
+            export() {
+                return {
+                    tasks: Array.from(this.tasks.values()).map(task => task.toJSON()),
+                    exportedAt: new Date().toISOString(),
+                    version: '1.0'
+                };
+            }
+
+            import(data) {
+                try {
+                    if (!data || !Array.isArray(data.tasks)) {
+                        throw new Error('Invalid import data format');
+                    }
+
+                    const importedTasks = [];
+                    const errors = [];
+
+                    data.tasks.forEach(taskData => {
+                        try {
+                            // Generate new ID to avoid conflicts
+                            delete taskData.id;
+                            const task = this.create(taskData);
+                            importedTasks.push(task);
+                        } catch (error) {
+                            errors.push({ task: taskData, error: error.message });
+                        }
+                    });
+
+                    this.emit('tasksImported', { 
+                        imported: importedTasks, 
+                        errors,
+                        count: importedTasks.length 
+                    });
+
+                    return { imported: importedTasks, errors };
+                } catch (error) {
+                    console.error('Failed to import tasks:', error);
+                    throw error;
+                }
+            }
+        }
+
+        // ================================
+        // CATEGORY MANAGER
+        // ================================
+        
+        /**
+         * CategoryManager class for handling category operations
+         */
+        class CategoryManager extends DataEventEmitter {
+            constructor() {
+                super();
+                this.storage = new StorageManager();
+                this.categories = new Map();
+                this.initialized = false;
+                this.loadCategories();
+            }
+
+            // ================================
+            // INITIALIZATION
+            // ================================
+
+            async loadCategories() {
+                try {
+                    const data = this.storage.load();
+                    if (data && Array.isArray(data.categories)) {
+                        this.categories.clear();
+                        data.categories.forEach(categoryData => {
+                            try {
+                                const category = new Category(categoryData);
+                                this.categories.set(category.id, category);
+                            } catch (error) {
+                                console.warn('Skipping invalid category:', categoryData.id, error.message);
+                            }
+                        });
+                    }
+
+                    // Ensure default categories exist
+                    this._ensureDefaultCategories();
+                    this.initialized = true;
+                    this.emit('categoriesLoaded', { count: this.categories.size });
+                } catch (error) {
+                    console.error('Failed to load categories:', error);
+                    this.emit('loadError', error);
+                }
+            }
+
+            _ensureDefaultCategories() {
+                const defaultCategories = [
+                    { id: 'general', name: 'General', color: '#2563eb', order: 0 },
+                    { id: 'work', name: 'Work', color: '#dc2626', order: 1 },
+                    { id: 'personal', name: 'Personal', color: '#16a34a', order: 2 },
+                    { id: 'shopping', name: 'Shopping', color: '#ca8a04', order: 3 },
+                    { id: 'health', name: 'Health', color: '#9333ea', order: 4 }
+                ];
+
+                let needsSave = false;
+                defaultCategories.forEach(catData => {
+                    if (!this.categories.has(catData.id)) {
+                        this.categories.set(catData.id, new Category(catData));
+                        needsSave = true;
+                    }
+                });
+
+                if (needsSave) {
+                    this.save();
+                }
+            }
+
+            // ================================
+            // CRUD OPERATIONS
+            // ================================
+
+            create(categoryData) {
+                try {
+                    const category = new Category(categoryData);
+                    
+                    // Check for duplicate names
+                    const existingCategory = Array.from(this.categories.values())
+                        .find(cat => cat.name.toLowerCase() === category.name.toLowerCase());
+                    
+                    if (existingCategory) {
+                        throw new Error(`Category with name "${category.name}" already exists`);
+                    }
+
+                    this.categories.set(category.id, category);
+                    this.save();
+                    this.emit('categoryCreated', category);
+                    return category;
+                } catch (error) {
+                    console.error('Failed to create category:', error);
+                    throw error;
+                }
+            }
+
+            read(id) {
+                return this.categories.get(id) || null;
+            }
+
+            update(id, data) {
+                const category = this.categories.get(id);
+                if (!category) {
+                    throw new Error(`Category with id ${id} not found`);
+                }
+
+                // Check for duplicate names if name is being updated
+                if (data.name && data.name !== category.name) {
+                    const existingCategory = Array.from(this.categories.values())
+                        .find(cat => cat.id !== id && cat.name.toLowerCase() === data.name.toLowerCase());
+                    
+                    if (existingCategory) {
+                        throw new Error(`Category with name "${data.name}" already exists`);
+                    }
+                }
+
+                try {
+                    category.update(data);
+                    this.save();
+                    this.emit('categoryUpdated', category);
+                    return category;
+                } catch (error) {
+                    console.error('Failed to update category:', error);
+                    throw error;
+                }
+            }
+
+            delete(id) {
+                const category = this.categories.get(id);
+                if (!category) {
+                    throw new Error(`Category with id ${id} not found`);
+                }
+
+                // Prevent deletion of default categories with tasks
+                const defaultIds = ['general', 'work', 'personal', 'shopping', 'health'];
+                if (defaultIds.includes(id)) {
+                    throw new Error('Cannot delete default categories');
+                }
+
+                this.categories.delete(id);
+                this.save();
+                this.emit('categoryDeleted', { id, category });
+                return true;
+            }
+
+            // ================================
+            // QUERY OPERATIONS
+            // ================================
+
+            getAll() {
+                return Array.from(this.categories.values()).sort((a, b) => a.order - b.order);
+            }
+
+            find(predicate) {
+                return Array.from(this.categories.values()).filter(predicate);
+            }
+
+            findByName(name) {
+                return Array.from(this.categories.values())
+                    .find(cat => cat.name.toLowerCase() === name.toLowerCase());
+            }
+
+            // ================================
+            // STORAGE OPERATIONS
+            // ================================
+
+            save() {
+                try {
+                    const data = {
+                        categories: Array.from(this.categories.values()).map(cat => cat.toJSON()),
+                        version: '1.0',
+                        timestamp: new Date().toISOString()
+                    };
+
+                    this.storage.save(data);
+                    this.emit('categoriesSaved', { count: this.categories.size });
+                    return true;
+                } catch (error) {
+                    console.error('Failed to save categories:', error);
+                    this.emit('saveError', error);
+                    return false;
+                }
+            }
+
+            clear() {
+                this.categories.clear();
+                this._ensureDefaultCategories();
+                this.emit('categoriesCleared');
+            }
+        }
+
+        // ================================
+        // DATA MANAGER UTILITY
+        // ================================
+        
+        /**
+         * DataManager utility for coordinating between TaskManager and CategoryManager
+         */
+        class DataManager {
+            constructor() {
+                this.taskManager = new TaskManager();
+                this.categoryManager = new CategoryManager();
+                this.storage = new StorageManager();
+                this._setupCrossReferences();
+            }
+
+            _setupCrossReferences() {
+                // Listen for category deletions to update tasks
+                this.categoryManager.on('categoryDeleted', (data) => {
+                    const tasksInCategory = this.taskManager.findByCategory(data.id);
+                    if (tasksInCategory.length > 0) {
+                        // Move tasks to general category
+                        tasksInCategory.forEach(task => {
+                            this.taskManager.update(task.id, { category: 'general' });
+                        });
+                    }
+                });
+            }
+
+            // ================================
+            // COMBINED SAVE OPERATIONS
+            // ================================
+
+            saveAll() {
+                try {
+                    const taskData = this.taskManager.export();
+                    const categories = this.categoryManager.getAll();
+                    
+                    const combinedData = {
+                        tasks: taskData.tasks,
+                        categories: categories.map(cat => cat.toJSON()),
+                        version: '1.0',
+                        timestamp: new Date().toISOString()
+                    };
+
+                    return this.storage.save(combinedData);
+                } catch (error) {
+                    console.error('Failed to save all data:', error);
+                    return false;
+                }
+            }
+
+            // ================================
+            // DATA VALIDATION
+            // ================================
+
+            validateDataIntegrity() {
+                const issues = [];
+                const tasks = this.taskManager.getAll();
+                const categories = this.categoryManager.getAll();
+                const categoryIds = new Set(categories.map(cat => cat.id));
+
+                // Check for tasks with invalid categories
+                tasks.forEach(task => {
+                    if (!categoryIds.has(task.category)) {
+                        issues.push({
+                            type: 'invalid_category',
+                            taskId: task.id,
+                            taskTitle: task.title,
+                            invalidCategory: task.category
+                        });
+                    }
+
+                    // Check for orphaned subtasks
+                    if (task.parentTaskId && !this.taskManager.read(task.parentTaskId)) {
+                        issues.push({
+                            type: 'orphaned_subtask',
+                            taskId: task.id,
+                            taskTitle: task.title,
+                            missingParentId: task.parentTaskId
+                        });
+                    }
+                });
+
+                return issues;
+            }
+
+            repairDataIntegrity() {
+                const issues = this.validateDataIntegrity();
+                const repairs = [];
+
+                issues.forEach(issue => {
+                    try {
+                        if (issue.type === 'invalid_category') {
+                            this.taskManager.update(issue.taskId, { category: 'general' });
+                            repairs.push({
+                                type: 'category_fixed',
+                                taskId: issue.taskId,
+                                action: 'Moved to general category'
+                            });
+                        } else if (issue.type === 'orphaned_subtask') {
+                            this.taskManager.update(issue.taskId, { parentTaskId: null });
+                            repairs.push({
+                                type: 'subtask_orphan_fixed',
+                                taskId: issue.taskId,
+                                action: 'Removed parent task reference'
+                            });
+                        }
+                    } catch (error) {
+                        repairs.push({
+                            type: 'repair_failed',
+                            taskId: issue.taskId,
+                            error: error.message
+                        });
+                    }
+                });
+
+                return repairs;
+            }
+
+            // ================================
+            // EXPORT/IMPORT OPERATIONS
+            // ================================
+
+            exportAll() {
+                const tasks = this.taskManager.export();
+                const categories = this.categoryManager.getAll();
+                
+                return {
+                    tasks: tasks.tasks,
+                    categories: categories.map(cat => cat.toJSON()),
+                    exportedAt: new Date().toISOString(),
+                    version: '1.0',
+                    storageInfo: this.storage.getStorageInfo()
+                };
+            }
+
+            async importAll(data) {
+                const results = {
+                    tasks: { imported: [], errors: [] },
+                    categories: { imported: [], errors: [] }
+                };
+
+                try {
+                    // Import categories first
+                    if (data.categories) {
+                        data.categories.forEach(catData => {
+                            try {
+                                if (!this.categoryManager.read(catData.id)) {
+                                    const category = this.categoryManager.create(catData);
+                                    results.categories.imported.push(category);
+                                }
+                            } catch (error) {
+                                results.categories.errors.push({
+                                    category: catData,
+                                    error: error.message
+                                });
+                            }
+                        });
+                    }
+
+                    // Import tasks
+                    if (data.tasks) {
+                        const taskResults = this.taskManager.import({ tasks: data.tasks });
+                        results.tasks = taskResults;
+                    }
+
+                    return results;
+                } catch (error) {
+                    console.error('Failed to import data:', error);
+                    throw error;
+                }
+            }
+
+            // ================================
+            // CLEANUP OPERATIONS
+            // ================================
+
+            clearAll() {
+                this.taskManager.clear();
+                this.categoryManager.clear();
+                this.storage.clear();
+            }
+
+            getStorageInfo() {
+                return this.storage.getStorageInfo();
+            }
+        }
+
+        // ================================
+        // SYSTEM INITIALIZATION
+        // ================================
+        
+        /**
+         * Initialize the data layer and create global instances
+         */
+        let dataManager;
+        let taskManager;
+        let categoryManager;
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                // Create global instances
+                dataManager = new DataManager();
+                taskManager = dataManager.taskManager;
+                categoryManager = dataManager.categoryManager;
+
+                // Make instances globally available for development
+                window.CCPM = {
+                    dataManager,
+                    taskManager,
+                    categoryManager,
+                    Task,
+                    Category,
+                    StorageManager,
+                    version: '1.0'
+                };
+
+                // Set up global error handling for data operations
+                window.addEventListener('error', function(event) {
+                    console.error('Global error caught:', event.error);
+                });
+
+                // Set up storage quota warning
+                const storageInfo = dataManager.getStorageInfo();
+                if (storageInfo.available && storageInfo.usedPercentage > 80) {
+                    console.warn('Storage usage is high:', storageInfo.usedPercentage + '%');
+                }
+
+                // Perform data integrity check
+                const integrityIssues = dataManager.validateDataIntegrity();
+                if (integrityIssues.length > 0) {
+                    console.warn('Data integrity issues found:', integrityIssues);
+                    const repairs = dataManager.repairDataIntegrity();
+                    console.info('Data repairs completed:', repairs);
+                }
+
+                console.info('CCPM Todo List data layer initialized successfully', {
+                    tasks: taskManager.getStats(),
+                    categories: categoryManager.getAll().length,
+                    storage: storageInfo
+                });
+
+                // Remove loading states and show empty states
+                document.querySelectorAll('.loading-state').forEach(el => {
+                    el.classList.add('hidden');
+                });
+
+            } catch (error) {
+                console.error('Failed to initialize CCPM Todo List:', error);
+                
+                // Show error state
+                document.body.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: center; height: 100vh; text-align: center; color: #ef4444;">
+                        <div>
+                            <h1>Initialization Error</h1>
+                            <p>Failed to start CCPM Todo List. Please refresh the page.</p>
+                            <p style="font-size: 0.875rem; color: #64748b; margin-top: 1rem;">Error: ${error.message}</p>
+                        </div>
+                    </div>
+                `;
+            }
+        });
     </script>
 </body>
 </html>
