@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CCPM Todo List - A comprehensive task management application with calendar integration and daily reviews">
+    <title>CCPM Todo List</title>
+    
+    <style>
+        /* CSS Reset and Base Styles */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* CSS Custom Properties for Theme Management */
+        :root {
+            /* Color Palette */
+            --color-primary: #2563eb;
+            --color-primary-hover: #1d4ed8;
+            --color-primary-light: #dbeafe;
+            --color-secondary: #64748b;
+            --color-secondary-light: #f1f5f9;
+            
+            /* Neutral Colors */
+            --color-text-primary: #0f172a;
+            --color-text-secondary: #475569;
+            --color-text-muted: #94a3b8;
+            --color-background: #ffffff;
+            --color-background-secondary: #f8fafc;
+            --color-border: #e2e8f0;
+            --color-border-light: #f1f5f9;
+            
+            /* Status Colors */
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-error: #ef4444;
+            --color-info: #3b82f6;
+            
+            /* Spacing Scale */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            --space-3xl: 4rem;
+            
+            /* Typography Scale */
+            --text-xs: 0.75rem;
+            --text-sm: 0.875rem;
+            --text-base: 1rem;
+            --text-lg: 1.125rem;
+            --text-xl: 1.25rem;
+            --text-2xl: 1.5rem;
+            --text-3xl: 1.875rem;
+            --text-4xl: 2.25rem;
+            
+            /* Line Heights */
+            --leading-tight: 1.25;
+            --leading-normal: 1.5;
+            --leading-relaxed: 1.625;
+            
+            /* Font Weights */
+            --font-normal: 400;
+            --font-medium: 500;
+            --font-semibold: 600;
+            --font-bold: 700;
+            
+            /* Border Radius */
+            --radius-sm: 0.125rem;
+            --radius-md: 0.375rem;
+            --radius-lg: 0.5rem;
+            --radius-xl: 0.75rem;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            
+            /* Transitions */
+            --transition-fast: 0.15s ease-in-out;
+            --transition-normal: 0.25s ease-in-out;
+            --transition-slow: 0.4s ease-in-out;
+            
+            /* Layout Breakpoints */
+            --breakpoint-sm: 640px;
+            --breakpoint-md: 768px;
+            --breakpoint-lg: 1024px;
+            --breakpoint-xl: 1280px;
+        }
+
+        /* Base Typography */
+        html {
+            font-size: 16px;
+            line-height: var(--leading-normal);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            color: var(--color-text-primary);
+            background-color: var(--color-background);
+            font-size: var(--text-base);
+            font-weight: var(--font-normal);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Heading Hierarchy */
+        h1 {
+            font-size: var(--text-3xl);
+            font-weight: var(--font-bold);
+            line-height: var(--leading-tight);
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-lg);
+        }
+
+        h2 {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-semibold);
+            line-height: var(--leading-tight);
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-md);
+        }
+
+        h3 {
+            font-size: var(--text-xl);
+            font-weight: var(--font-semibold);
+            line-height: var(--leading-tight);
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-sm);
+        }
+
+        h4 {
+            font-size: var(--text-lg);
+            font-weight: var(--font-medium);
+            line-height: var(--leading-normal);
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-sm);
+        }
+
+        /* Main Layout Container */
+        .app-container {
+            min-height: 100vh;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            grid-template-areas: 
+                "header"
+                "main"
+                "footer";
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .app-header {
+            grid-area: header;
+            background-color: var(--color-background);
+            border-bottom: 1px solid var(--color-border);
+            padding: var(--space-md) var(--space-lg);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .app-title {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--color-primary);
+            margin: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        /* Main Content Area */
+        .app-main {
+            grid-area: main;
+            padding: var(--space-lg);
+            background-color: var(--color-background-secondary);
+            min-height: 0; /* Allow grid item to shrink */
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            height: 100%;
+        }
+
+        /* Main Layout Grid - Mobile First */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: auto auto auto;
+            grid-template-areas:
+                "tasks"
+                "calendar"
+                "review";
+            gap: var(--space-xl);
+            height: 100%;
+        }
+
+        /* Task List Section */
+        .task-section {
+            grid-area: tasks;
+            background-color: var(--color-background);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: var(--space-xl);
+            min-height: 400px;
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid var(--color-border-light);
+        }
+
+        .task-list {
+            min-height: 300px;
+            position: relative;
+        }
+
+        /* Calendar Section */
+        .calendar-section {
+            grid-area: calendar;
+            background-color: var(--color-background);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: var(--space-xl);
+            min-height: 350px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid var(--color-border-light);
+        }
+
+        .calendar-view {
+            min-height: 250px;
+            position: relative;
+        }
+
+        /* Daily Review Section */
+        .review-section {
+            grid-area: review;
+            background-color: var(--color-background);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: var(--space-xl);
+            min-height: 300px;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid var(--color-border-light);
+        }
+
+        .review-content {
+            min-height: 200px;
+            position: relative;
+        }
+
+        /* Footer */
+        .app-footer {
+            grid-area: footer;
+            background-color: var(--color-background);
+            border-top: 1px solid var(--color-border);
+            padding: var(--space-md) var(--space-lg);
+            text-align: center;
+            color: var(--color-text-secondary);
+            font-size: var(--text-sm);
+        }
+
+        /* Loading States */
+        .loading-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: var(--color-text-muted);
+            gap: var(--space-md);
+        }
+
+        .loading-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--color-border);
+            border-top-color: var(--color-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty States */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: var(--color-text-muted);
+            text-align: center;
+            gap: var(--space-md);
+        }
+
+        .empty-state-icon {
+            width: 48px;
+            height: 48px;
+            opacity: 0.5;
+        }
+
+        .empty-state-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-medium);
+            color: var(--color-text-secondary);
+            margin: 0;
+        }
+
+        .empty-state-description {
+            font-size: var(--text-sm);
+            max-width: 300px;
+            line-height: var(--leading-relaxed);
+        }
+
+        /* Utility Classes */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .visually-hidden {
+            position: absolute;
+            left: -10000px;
+            top: auto;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+        }
+
+        /* Button Styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-sm) var(--space-md);
+            border: 1px solid transparent;
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            text-decoration: none;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            gap: var(--space-xs);
+            line-height: 1;
+        }
+
+        .btn:focus {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+        }
+
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-primary-hover);
+            border-color: var(--color-primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--color-text-secondary);
+            border-color: var(--color-border);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--color-secondary-light);
+            border-color: var(--color-secondary);
+        }
+
+        /* Responsive Design - Tablet */
+        @media (min-width: 768px) {
+            .app-main {
+                padding: var(--space-xl);
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: auto auto;
+                grid-template-areas:
+                    "tasks calendar"
+                    "review review";
+                gap: var(--space-2xl);
+            }
+
+            h1 {
+                font-size: var(--text-4xl);
+            }
+
+            .task-section,
+            .calendar-section,
+            .review-section {
+                padding: var(--space-2xl);
+            }
+        }
+
+        /* Responsive Design - Desktop */
+        @media (min-width: 1024px) {
+            .app-container {
+                max-width: 1400px;
+            }
+
+            .content-grid {
+                grid-template-columns: 2fr 1fr 1fr;
+                grid-template-rows: auto auto;
+                grid-template-areas:
+                    "tasks calendar review"
+                    "tasks calendar review";
+            }
+
+            .task-section {
+                min-height: 600px;
+            }
+
+            .calendar-section {
+                min-height: 500px;
+            }
+
+            .review-section {
+                min-height: 400px;
+            }
+        }
+
+        /* Large Desktop */
+        @media (min-width: 1280px) {
+            .app-main {
+                padding: var(--space-2xl) var(--space-xl);
+            }
+
+            .content-grid {
+                gap: var(--space-3xl);
+            }
+        }
+
+        /* High Contrast Mode Support */
+        @media (prefers-contrast: high) {
+            :root {
+                --color-border: #000000;
+                --color-text-secondary: #000000;
+                --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+                --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+            }
+        }
+
+        /* Reduced Motion Support */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .app-header,
+            .app-footer,
+            .btn,
+            .loading-spinner {
+                display: none;
+            }
+
+            .app-container {
+                grid-template-areas: "main";
+                grid-template-rows: 1fr;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+                grid-template-areas:
+                    "tasks"
+                    "calendar"
+                    "review";
+                gap: var(--space-lg);
+            }
+
+            .task-section,
+            .calendar-section,
+            .review-section {
+                box-shadow: none;
+                border: 1px solid var(--color-border);
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip to main content link for accessibility -->
+    <a href="#main-content" class="sr-only">Skip to main content</a>
+
+    <div class="app-container">
+        <!-- Application Header -->
+        <header class="app-header" role="banner">
+            <div class="header-content">
+                <h1 class="app-title">CCPM Todo List</h1>
+                <nav class="header-actions" role="navigation" aria-label="Main navigation">
+                    <button class="btn btn-secondary" type="button" aria-label="Settings">
+                        Settings
+                    </button>
+                    <button class="btn btn-primary" type="button" aria-label="Add new task">
+                        + New Task
+                    </button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="app-main" id="main-content" role="main">
+            <div class="main-content">
+                <div class="content-grid">
+                    <!-- Task List Section -->
+                    <section class="task-section" aria-labelledby="tasks-heading">
+                        <div class="task-header">
+                            <h2 id="tasks-heading">My Tasks</h2>
+                            <div class="header-actions">
+                                <button class="btn btn-secondary" type="button" aria-label="Filter tasks">
+                                    Filter
+                                </button>
+                                <button class="btn btn-secondary" type="button" aria-label="Sort tasks">
+                                    Sort
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="task-list" role="region" aria-label="Task list">
+                            <!-- Loading State -->
+                            <div class="loading-state hidden" id="tasks-loading" aria-live="polite">
+                                <div class="loading-spinner" aria-hidden="true"></div>
+                                <p>Loading your tasks...</p>
+                            </div>
+
+                            <!-- Empty State -->
+                            <div class="empty-state" id="tasks-empty" aria-live="polite">
+                                <svg class="empty-state-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                </svg>
+                                <h3 class="empty-state-title">No tasks yet</h3>
+                                <p class="empty-state-description">
+                                    Create your first task to get started with organizing your work.
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Calendar Section -->
+                    <section class="calendar-section" aria-labelledby="calendar-heading">
+                        <div class="calendar-header">
+                            <h2 id="calendar-heading">Calendar</h2>
+                            <div class="header-actions">
+                                <button class="btn btn-secondary" type="button" aria-label="Previous month">
+                                    ‹
+                                </button>
+                                <button class="btn btn-secondary" type="button" aria-label="Next month">
+                                    ›
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="calendar-view" role="region" aria-label="Calendar view">
+                            <!-- Loading State -->
+                            <div class="loading-state hidden" id="calendar-loading" aria-live="polite">
+                                <div class="loading-spinner" aria-hidden="true"></div>
+                                <p>Loading calendar...</p>
+                            </div>
+
+                            <!-- Empty State -->
+                            <div class="empty-state" id="calendar-empty" aria-live="polite">
+                                <svg class="empty-state-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <h3 class="empty-state-title">Calendar view</h3>
+                                <p class="empty-state-description">
+                                    Your scheduled tasks and deadlines will appear here.
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Daily Review Section -->
+                    <section class="review-section" aria-labelledby="review-heading">
+                        <div class="review-header">
+                            <h2 id="review-heading">Daily Review</h2>
+                            <div class="header-actions">
+                                <button class="btn btn-secondary" type="button" aria-label="Previous day">
+                                    ‹
+                                </button>
+                                <button class="btn btn-secondary" type="button" aria-label="Next day">
+                                    ›
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="review-content" role="region" aria-label="Daily review content">
+                            <!-- Loading State -->
+                            <div class="loading-state hidden" id="review-loading" aria-live="polite">
+                                <div class="loading-spinner" aria-hidden="true"></div>
+                                <p>Loading review...</p>
+                            </div>
+
+                            <!-- Empty State -->
+                            <div class="empty-state" id="review-empty" aria-live="polite">
+                                <svg class="empty-state-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                <h3 class="empty-state-title">Daily Review</h3>
+                                <p class="empty-state-description">
+                                    Reflect on your progress and plan for tomorrow.
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+
+        <!-- Application Footer -->
+        <footer class="app-footer" role="contentinfo">
+            <p>&copy; 2024 CCPM Todo List. Built with accessibility and performance in mind.</p>
+        </footer>
+    </div>
+</body>
+</html>
