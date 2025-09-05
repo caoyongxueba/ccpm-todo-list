@@ -258,6 +258,214 @@
             position: relative;
         }
 
+        /* Calendar Grid Layout */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background-color: var(--color-border);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        /* Calendar Header Row */
+        .calendar-day-header {
+            background-color: var(--color-background-secondary);
+            padding: var(--space-sm);
+            text-align: center;
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--color-text-secondary);
+        }
+
+        /* Calendar Date Cells */
+        .calendar-date {
+            background-color: var(--color-background);
+            min-height: 60px;
+            padding: var(--space-xs);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            position: relative;
+            border: none;
+            text-align: center;
+        }
+
+        .calendar-date:hover {
+            background-color: var(--color-background-secondary);
+        }
+
+        .calendar-date:focus {
+            outline: 2px solid var(--color-primary);
+            outline-offset: -2px;
+        }
+
+        /* Date Number Styling */
+        .calendar-date-number {
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-xs);
+        }
+
+        /* Date States */
+        .calendar-date--other-month {
+            background-color: var(--color-background-secondary);
+            opacity: 0.5;
+        }
+
+        .calendar-date--other-month .calendar-date-number {
+            color: var(--color-text-muted);
+        }
+
+        .calendar-date--today {
+            background-color: var(--color-primary-light);
+            border: 2px solid var(--color-primary);
+        }
+
+        .calendar-date--today .calendar-date-number {
+            color: var(--color-primary);
+            font-weight: var(--font-bold);
+        }
+
+        .calendar-date--selected {
+            background-color: var(--color-primary);
+            color: white;
+        }
+
+        .calendar-date--selected .calendar-date-number {
+            color: white;
+        }
+
+        .calendar-date--has-tasks {
+            position: relative;
+        }
+
+        /* Task Indicators */
+        .calendar-task-indicators {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+            justify-content: center;
+            max-width: 100%;
+        }
+
+        .calendar-task-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--color-secondary);
+        }
+
+        .calendar-task-dot--overdue {
+            background-color: var(--color-error);
+        }
+
+        .calendar-task-dot--high-priority {
+            background-color: var(--color-warning);
+        }
+
+        .calendar-task-dot--completed {
+            background-color: var(--color-success);
+        }
+
+        /* Task Count Badge */
+        .calendar-task-count {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background-color: var(--color-primary);
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: var(--font-bold);
+        }
+
+        .calendar-task-count--overdue {
+            background-color: var(--color-error);
+        }
+
+        /* Calendar Navigation */
+        .calendar-nav-button {
+            background: none;
+            border: none;
+            font-size: var(--text-xl);
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            padding: var(--space-xs);
+            border-radius: var(--radius-sm);
+            transition: var(--transition-fast);
+        }
+
+        .calendar-nav-button:hover {
+            background-color: var(--color-background-secondary);
+            color: var(--color-text-primary);
+        }
+
+        .calendar-nav-button:focus {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+        }
+
+        .calendar-month-year {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--color-text-primary);
+        }
+
+        /* Calendar Month/Year Selector */
+        .calendar-selector {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .calendar-selector select {
+            padding: var(--space-xs) var(--space-sm);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            background-color: var(--color-background);
+            color: var(--color-text-primary);
+            font-size: var(--text-sm);
+        }
+
+        /* Mobile Calendar Styles */
+        @media (max-width: 640px) {
+            .calendar-date {
+                min-height: 45px;
+                padding: 2px;
+            }
+
+            .calendar-date-number {
+                font-size: var(--text-xs);
+            }
+
+            .calendar-task-dot {
+                width: 4px;
+                height: 4px;
+            }
+
+            .calendar-task-count {
+                width: 14px;
+                height: 14px;
+                font-size: 9px;
+            }
+
+            .calendar-day-header {
+                font-size: var(--text-xs);
+                padding: var(--space-xs);
+            }
+        }
+
         /* Daily Review Section */
         .review-section {
             grid-area: review;
@@ -1153,6 +1361,9 @@
                                 <button class="btn btn-secondary" type="button" aria-label="Previous month">
                                     ‹
                                 </button>
+                                <button class="btn btn-primary" type="button" id="today-btn" aria-label="Go to today">
+                                    Today
+                                </button>
                                 <button class="btn btn-secondary" type="button" aria-label="Next month">
                                     ›
                                 </button>
@@ -1852,6 +2063,30 @@
                     if (!task.dueDate || task.completed) return false;
                     const dueDate = new Date(task.dueDate);
                     return dueDate <= futureDate;
+                });
+            }
+
+            findByDateRange(startDate, endDate) {
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+                
+                // Ensure start of day for startDate and end of day for endDate
+                start.setHours(0, 0, 0, 0);
+                end.setHours(23, 59, 59, 999);
+                
+                return this.find(task => {
+                    if (!task.dueDate) return false;
+                    const dueDate = new Date(task.dueDate);
+                    return dueDate >= start && dueDate <= end;
+                });
+            }
+
+            findByDate(date) {
+                const targetDate = new Date(date);
+                const dateString = targetDate.toISOString().split('T')[0];
+                
+                return this.find(task => {
+                    return task.dueDate && task.dueDate.split('T')[0] === dateString;
                 });
             }
 
@@ -3702,6 +3937,1172 @@
         }
 
         // ================================
+        // UI LAYER IMPLEMENTATION
+        // ================================
+
+        /**
+         * UIManager - Main UI controller that coordinates all UI components
+         */
+        class UIManager {
+            constructor() {
+                this.taskListComponent = null;
+                this.taskFormComponent = null;
+                this.initialized = false;
+                
+                // Initialize UI components
+                this.initializeComponents();
+                this.setupEventListeners();
+                this.setupDataObservers();
+                
+                this.initialized = true;
+                console.info('UIManager initialized');
+            }
+
+            initializeComponents() {
+                // Initialize task list component
+                this.taskListComponent = new TaskListComponent();
+                
+                // Initialize task form component
+                this.taskFormComponent = new TaskFormComponent();
+                
+                // Initialize calendar component
+                this.calendarComponent = new CalendarComponent();
+                
+                // Initialize other UI components
+                this.initializeHeaderActions();
+                this.initializeEmptyStates();
+            }
+
+            setupEventListeners() {
+                // New task button
+                const newTaskBtn = document.getElementById('new-task-btn');
+                if (newTaskBtn) {
+                    newTaskBtn.addEventListener('click', () => {
+                        this.taskFormComponent.showCreateForm();
+                    });
+                }
+
+                // Global keyboard shortcuts
+                document.addEventListener('keydown', (event) => {
+                    this.handleKeyboardShortcuts(event);
+                });
+
+                // Handle form submissions
+                document.addEventListener('submit', (event) => {
+                    if (event.target.classList.contains('task-form')) {
+                        event.preventDefault();
+                        this.handleTaskFormSubmit(event);
+                    }
+                });
+            }
+
+            setupDataObservers() {
+                // Listen for task changes
+                taskManager.on('taskCreated', (task) => {
+                    this.taskListComponent.handleTaskCreated(task);
+                    this.updateEmptyStates();
+                });
+
+                taskManager.on('taskUpdated', (task) => {
+                    this.taskListComponent.handleTaskUpdated(task);
+                });
+
+                taskManager.on('taskDeleted', (data) => {
+                    this.taskListComponent.handleTaskDeleted(data);
+                    this.updateEmptyStates();
+                });
+
+                taskManager.on('tasksLoaded', () => {
+                    this.taskListComponent.render();
+                    this.updateEmptyStates();
+                });
+            }
+
+            initializeHeaderActions() {
+                // Initialize filter and sort buttons
+                const filterBtn = document.querySelector('[aria-label="Filter tasks"]');
+                const sortBtn = document.querySelector('[aria-label="Sort tasks"]');
+
+                if (filterBtn) {
+                    filterBtn.addEventListener('click', () => {
+                        this.showFilterDialog();
+                    });
+                }
+
+                if (sortBtn) {
+                    sortBtn.addEventListener('click', () => {
+                        this.showSortDialog();
+                    });
+                }
+            }
+
+            initializeEmptyStates() {
+                this.updateEmptyStates();
+            }
+
+            updateEmptyStates() {
+                const tasks = taskManager.getAll();
+                const tasksEmpty = document.getElementById('tasks-empty');
+                const taskList = document.querySelector('.task-list');
+
+                if (tasks.length === 0) {
+                    if (tasksEmpty) tasksEmpty.style.display = 'flex';
+                } else {
+                    if (tasksEmpty) tasksEmpty.style.display = 'none';
+                }
+            }
+
+            handleKeyboardShortcuts(event) {
+                // Ctrl/Cmd + N: New task
+                if ((event.ctrlKey || event.metaKey) && event.key === 'n') {
+                    event.preventDefault();
+                    this.taskFormComponent.showCreateForm();
+                }
+
+                // Escape: Close modals
+                if (event.key === 'Escape') {
+                    this.taskFormComponent.hideForm();
+                    this.hideAllDialogs();
+                }
+            }
+
+            handleTaskFormSubmit(event) {
+                const form = event.target;
+                const formData = new FormData(form);
+                const taskData = this.extractTaskDataFromForm(formData);
+
+                if (form.dataset.mode === 'edit') {
+                    this.updateTask(form.dataset.taskId, taskData);
+                } else {
+                    this.createTask(taskData);
+                }
+            }
+
+            extractTaskDataFromForm(formData) {
+                return {
+                    title: formData.get('title'),
+                    description: formData.get('description'),
+                    category: formData.get('category'),
+                    priority: formData.get('priority'),
+                    dueDate: formData.get('dueDate') || null,
+                    estimatedDuration: formData.get('estimatedDuration') ? parseInt(formData.get('estimatedDuration')) : null
+                };
+            }
+
+            createTask(taskData) {
+                try {
+                    taskManager.create(taskData);
+                    this.taskFormComponent.hideForm();
+                    showNotification('Task created successfully!', 'success');
+                } catch (error) {
+                    console.error('Failed to create task:', error);
+                    this.taskFormComponent.showFormError(error.message);
+                }
+            }
+
+            updateTask(taskId, taskData) {
+                try {
+                    taskManager.update(taskId, taskData);
+                    this.taskFormComponent.hideForm();
+                    showNotification('Task updated successfully!', 'success');
+                } catch (error) {
+                    console.error('Failed to update task:', error);
+                    this.taskFormComponent.showFormError(error.message);
+                }
+            }
+
+            showFilterDialog() {
+                // Simple filter implementation
+                const filterOptions = ['all', 'pending', 'completed'];
+                const choice = prompt('Filter tasks:\n1. All\n2. Pending\n3. Completed\n\nEnter number (1-3):');
+                
+                if (choice) {
+                    const index = parseInt(choice) - 1;
+                    if (index >= 0 && index < filterOptions.length) {
+                        this.taskListComponent.setFilter(filterOptions[index]);
+                    }
+                }
+            }
+
+            showSortDialog() {
+                // Simple sort implementation
+                const sortOptions = [
+                    { key: 'createdAt', label: 'Created Date' },
+                    { key: 'dueDate', label: 'Due Date' },
+                    { key: 'priority', label: 'Priority' },
+                    { key: 'title', label: 'Title' }
+                ];
+                
+                const choice = prompt('Sort tasks by:\n1. Created Date\n2. Due Date\n3. Priority\n4. Title\n\nEnter number (1-4):');
+                
+                if (choice) {
+                    const index = parseInt(choice) - 1;
+                    if (index >= 0 && index < sortOptions.length) {
+                        this.taskListComponent.setSortBy(sortOptions[index].key);
+                    }
+                }
+            }
+
+            hideAllDialogs() {
+                // Hide any open dialogs
+                document.querySelectorAll('.confirmation-dialog').forEach(dialog => {
+                    dialog.remove();
+                });
+            }
+        }
+
+        /**
+         * TaskListComponent - Handles task list display and interactions
+         */
+        class TaskListComponent {
+            constructor() {
+                this.container = document.querySelector('.task-list');
+                this.filter = 'all'; // all, pending, completed
+                this.sortBy = 'createdAt';
+                this.sortOrder = 'desc';
+                
+                if (!this.container) {
+                    console.error('Task list container not found');
+                    return;
+                }
+
+                this.render();
+                console.info('TaskListComponent initialized');
+            }
+
+            render() {
+                if (!this.container) return;
+
+                // Get tasks based on current filter
+                let tasks = this.getFilteredTasks();
+                
+                // Sort tasks
+                tasks = taskManager.sort(tasks, this.sortBy, this.sortOrder);
+
+                // Clear container
+                this.container.innerHTML = '';
+
+                // Render tasks
+                if (tasks.length === 0) {
+                    this.renderEmptyState();
+                } else {
+                    tasks.forEach(task => {
+                        const taskElement = this.createTaskElement(task);
+                        this.container.appendChild(taskElement);
+                    });
+                }
+            }
+
+            getFilteredTasks() {
+                switch (this.filter) {
+                    case 'pending':
+                        return taskManager.findPending();
+                    case 'completed':
+                        return taskManager.findCompleted();
+                    default:
+                        return taskManager.getAll();
+                }
+            }
+
+            createTaskElement(task) {
+                const taskElement = document.createElement('div');
+                taskElement.className = 'task-item';
+                taskElement.dataset.taskId = task.id;
+                
+                if (task.completed) {
+                    taskElement.classList.add('completed');
+                }
+                
+                if (task.isOverdue()) {
+                    taskElement.classList.add('overdue');
+                } else if (this.isDueToday(task)) {
+                    taskElement.classList.add('due-today');
+                }
+
+                taskElement.innerHTML = `
+                    <div class="task-checkbox">
+                        <input type="checkbox" 
+                               ${task.completed ? 'checked' : ''} 
+                               aria-label="Mark task as ${task.completed ? 'incomplete' : 'complete'}"
+                               data-task-id="${task.id}">
+                    </div>
+                    <div class="task-content">
+                        <h3 class="task-title">${this.escapeHtml(task.title)}</h3>
+                        ${task.description ? `<p class="task-description">${this.escapeHtml(task.description)}</p>` : ''}
+                        <div class="task-meta">
+                            <span class="task-priority ${task.priority}">${task.priority.toUpperCase()}</span>
+                            ${task.dueDate ? `<span class="task-due-date ${this.getDueDateClass(task)}">${this.formatDate(task.dueDate)}</span>` : ''}
+                            <span class="task-category">${task.category}</span>
+                        </div>
+                    </div>
+                    <div class="task-actions">
+                        <button class="btn btn-secondary" onclick="uiManager.taskListComponent.editTask('${task.id}')" aria-label="Edit task">
+                            Edit
+                        </button>
+                        <button class="btn btn-secondary" onclick="uiManager.taskListComponent.deleteTask('${task.id}')" aria-label="Delete task">
+                            Delete
+                        </button>
+                    </div>
+                `;
+
+                // Add event listeners
+                this.addTaskElementListeners(taskElement, task);
+
+                return taskElement;
+            }
+
+            addTaskElementListeners(taskElement, task) {
+                // Checkbox listener
+                const checkbox = taskElement.querySelector('input[type="checkbox"]');
+                if (checkbox) {
+                    checkbox.addEventListener('change', (event) => {
+                        this.toggleTaskCompletion(task.id, event.target.checked);
+                    });
+                }
+
+                // Click to edit (double-click)
+                taskElement.addEventListener('dblclick', () => {
+                    this.editTask(task.id);
+                });
+            }
+
+            toggleTaskCompletion(taskId, completed) {
+                try {
+                    taskManager.update(taskId, { completed: completed });
+                    showNotification(completed ? 'Task completed!' : 'Task reopened!', 'success');
+                } catch (error) {
+                    console.error('Failed to toggle task completion:', error);
+                    showNotification('Failed to update task', 'error');
+                    
+                    // Revert checkbox state
+                    const checkbox = document.querySelector(`input[data-task-id="${taskId}"]`);
+                    if (checkbox) {
+                        checkbox.checked = !completed;
+                    }
+                }
+            }
+
+            editTask(taskId) {
+                const task = taskManager.read(taskId);
+                if (task) {
+                    window.uiManager.taskFormComponent.showEditForm(task);
+                }
+            }
+
+            deleteTask(taskId) {
+                const task = taskManager.read(taskId);
+                if (!task) return;
+
+                this.showDeleteConfirmation(task, (confirmed) => {
+                    if (confirmed) {
+                        try {
+                            taskManager.delete(taskId);
+                            showNotification('Task deleted successfully!', 'success');
+                        } catch (error) {
+                            console.error('Failed to delete task:', error);
+                            showNotification('Failed to delete task', 'error');
+                        }
+                    }
+                });
+            }
+
+            showDeleteConfirmation(task, callback) {
+                const overlay = document.createElement('div');
+                overlay.className = 'task-form-overlay active';
+                
+                overlay.innerHTML = `
+                    <div class="confirmation-dialog">
+                        <h3 class="confirmation-title">Delete Task</h3>
+                        <p class="confirmation-message">
+                            Are you sure you want to delete "${this.escapeHtml(task.title)}"?
+                            This action cannot be undone.
+                        </p>
+                        <div class="confirmation-actions">
+                            <button class="btn btn-secondary" data-action="cancel">Cancel</button>
+                            <button class="btn btn-primary" data-action="confirm" style="background-color: var(--color-error);">Delete</button>
+                        </div>
+                    </div>
+                `;
+
+                // Add event listeners
+                overlay.addEventListener('click', (event) => {
+                    if (event.target === overlay || event.target.dataset.action === 'cancel') {
+                        overlay.remove();
+                        callback(false);
+                    } else if (event.target.dataset.action === 'confirm') {
+                        overlay.remove();
+                        callback(true);
+                    }
+                });
+
+                document.body.appendChild(overlay);
+            }
+
+            // Event handlers for data changes
+            handleTaskCreated(task) {
+                this.render();
+            }
+
+            handleTaskUpdated(task) {
+                this.render();
+            }
+
+            handleTaskDeleted(data) {
+                this.render();
+            }
+
+            // Filter and sort methods
+            setFilter(filter) {
+                this.filter = filter;
+                this.render();
+                showNotification(`Filter set to: ${filter}`, 'info');
+            }
+
+            setSortBy(sortBy) {
+                this.sortBy = sortBy;
+                this.render();
+                showNotification(`Sorted by: ${sortBy}`, 'info');
+            }
+
+            // Utility methods
+            isDueToday(task) {
+                if (!task.dueDate) return false;
+                const today = new Date().toISOString().split('T')[0];
+                return task.dueDate.split('T')[0] === today;
+            }
+
+            getDueDateClass(task) {
+                if (task.isOverdue()) return 'overdue';
+                if (this.isDueToday(task)) return 'due-today';
+                return '';
+            }
+
+            formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            renderEmptyState() {
+                this.container.innerHTML = `
+                    <div class="empty-state">
+                        <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                        <h3 class="empty-state-title">No tasks found</h3>
+                        <p class="empty-state-description">
+                            ${this.filter === 'all' ? 'Create your first task to get started.' : `No ${this.filter} tasks to display.`}
+                        </p>
+                    </div>
+                `;
+            }
+        }
+
+        /**
+         * TaskFormComponent - Handles task creation and editing forms
+         */
+        class TaskFormComponent {
+            constructor() {
+                this.overlay = null;
+                this.form = null;
+                this.mode = 'create'; // create or edit
+                this.currentTaskId = null;
+                
+                this.createFormHTML();
+                console.info('TaskFormComponent initialized');
+            }
+
+            createFormHTML() {
+                // Create form overlay
+                this.overlay = document.createElement('div');
+                this.overlay.className = 'task-form-overlay';
+                this.overlay.innerHTML = `
+                    <div class="task-form-modal">
+                        <div class="task-form-header">
+                            <h2 class="task-form-title">Add New Task</h2>
+                        </div>
+                        <div class="task-form-body">
+                            <form class="task-form" data-mode="create">
+                                <div class="form-group">
+                                    <label class="form-label" for="task-title">Title *</label>
+                                    <input type="text" id="task-title" name="title" class="form-input" required maxlength="200">
+                                    <div class="form-error" id="title-error"></div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="task-description">Description</label>
+                                    <textarea id="task-description" name="description" class="form-textarea" maxlength="2000"></textarea>
+                                    <div class="form-error" id="description-error"></div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="task-category">Category</label>
+                                    <select id="task-category" name="category" class="form-select">
+                                        ${this.renderCategoryOptions()}
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="task-priority">Priority</label>
+                                    <select id="task-priority" name="priority" class="form-select">
+                                        <option value="low">Low</option>
+                                        <option value="medium" selected>Medium</option>
+                                        <option value="high">High</option>
+                                        <option value="urgent">Urgent</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="task-due-date">Due Date</label>
+                                    <input type="datetime-local" id="task-due-date" name="dueDate" class="form-input">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="task-estimated-duration">Estimated Duration (minutes)</label>
+                                    <input type="number" id="task-estimated-duration" name="estimatedDuration" class="form-input" min="0" max="9999">
+                                </div>
+                                
+                                <div class="form-error" id="form-general-error"></div>
+                            </form>
+                        </div>
+                        <div class="task-form-footer">
+                            <button type="button" class="btn btn-secondary" data-action="cancel">Cancel</button>
+                            <button type="submit" class="btn btn-primary" form="task-form">Save Task</button>
+                        </div>
+                    </div>
+                `;
+
+                // Add event listeners
+                this.setupFormEventListeners();
+            }
+
+            setupFormEventListeners() {
+                // Close on overlay click or cancel button
+                this.overlay.addEventListener('click', (event) => {
+                    if (event.target === this.overlay || event.target.dataset.action === 'cancel') {
+                        this.hideForm();
+                    }
+                });
+
+                // Form submission
+                const form = this.overlay.querySelector('.task-form');
+                form.addEventListener('submit', (event) => {
+                    event.preventDefault();
+                    this.handleFormSubmit();
+                });
+
+                // Real-time validation
+                form.addEventListener('input', (event) => {
+                    this.validateField(event.target);
+                });
+
+                // Escape key to close
+                this.overlay.addEventListener('keydown', (event) => {
+                    if (event.key === 'Escape') {
+                        this.hideForm();
+                    }
+                });
+            }
+
+            renderCategoryOptions() {
+                const categories = categoryManager.getAll();
+                return categories.map(category => 
+                    `<option value="${category.id}">${this.escapeHtml(category.name)}</option>`
+                ).join('');
+            }
+
+            showCreateForm() {
+                this.mode = 'create';
+                this.currentTaskId = null;
+                
+                // Update form title and mode
+                const title = this.overlay.querySelector('.task-form-title');
+                const form = this.overlay.querySelector('.task-form');
+                const submitBtn = this.overlay.querySelector('button[type="submit"]');
+                
+                title.textContent = 'Add New Task';
+                form.dataset.mode = 'create';
+                submitBtn.textContent = 'Save Task';
+                
+                // Reset form
+                this.resetForm();
+                
+                // Show overlay
+                document.body.appendChild(this.overlay);
+                this.overlay.classList.add('active');
+                
+                // Focus first input
+                setTimeout(() => {
+                    const firstInput = this.overlay.querySelector('#task-title');
+                    if (firstInput) firstInput.focus();
+                }, 100);
+            }
+
+            showEditForm(task) {
+                this.mode = 'edit';
+                this.currentTaskId = task.id;
+                
+                // Update form title and mode
+                const title = this.overlay.querySelector('.task-form-title');
+                const form = this.overlay.querySelector('.task-form');
+                const submitBtn = this.overlay.querySelector('button[type="submit"]');
+                
+                title.textContent = 'Edit Task';
+                form.dataset.mode = 'edit';
+                form.dataset.taskId = task.id;
+                submitBtn.textContent = 'Update Task';
+                
+                // Populate form with task data
+                this.populateForm(task);
+                
+                // Show overlay
+                document.body.appendChild(this.overlay);
+                this.overlay.classList.add('active');
+                
+                // Focus first input
+                setTimeout(() => {
+                    const firstInput = this.overlay.querySelector('#task-title');
+                    if (firstInput) {
+                        firstInput.focus();
+                        firstInput.select();
+                    }
+                }, 100);
+            }
+
+            hideForm() {
+                this.overlay.classList.remove('active');
+                setTimeout(() => {
+                    if (this.overlay.parentNode) {
+                        this.overlay.parentNode.removeChild(this.overlay);
+                    }
+                }, 300);
+                
+                // Clear any errors
+                this.clearFormErrors();
+            }
+
+            resetForm() {
+                const form = this.overlay.querySelector('.task-form');
+                form.reset();
+                
+                // Set defaults
+                const categorySelect = form.querySelector('#task-category');
+                const prioritySelect = form.querySelector('#task-priority');
+                
+                if (categorySelect) categorySelect.value = 'general';
+                if (prioritySelect) prioritySelect.value = 'medium';
+                
+                this.clearFormErrors();
+            }
+
+            populateForm(task) {
+                const form = this.overlay.querySelector('.task-form');
+                
+                // Populate fields
+                const fields = {
+                    'task-title': task.title,
+                    'task-description': task.description || '',
+                    'task-category': task.category,
+                    'task-priority': task.priority,
+                    'task-due-date': task.dueDate ? this.formatDateForInput(task.dueDate) : '',
+                    'task-estimated-duration': task.estimatedDuration || ''
+                };
+                
+                Object.entries(fields).forEach(([id, value]) => {
+                    const element = form.querySelector(`#${id}`);
+                    if (element) {
+                        element.value = value;
+                    }
+                });
+                
+                this.clearFormErrors();
+            }
+
+            handleFormSubmit() {
+                const form = this.overlay.querySelector('.task-form');
+                const formData = new FormData(form);
+                
+                // Validate form
+                if (!this.validateForm(formData)) {
+                    return;
+                }
+                
+                // Extract data
+                const taskData = {
+                    title: formData.get('title').trim(),
+                    description: formData.get('description').trim(),
+                    category: formData.get('category'),
+                    priority: formData.get('priority'),
+                    dueDate: formData.get('dueDate') || null,
+                    estimatedDuration: formData.get('estimatedDuration') ? parseInt(formData.get('estimatedDuration')) : null
+                };
+                
+                // Create or update task
+                try {
+                    if (this.mode === 'edit') {
+                        taskManager.update(this.currentTaskId, taskData);
+                        showNotification('Task updated successfully!', 'success');
+                    } else {
+                        taskManager.create(taskData);
+                        showNotification('Task created successfully!', 'success');
+                    }
+                    
+                    this.hideForm();
+                } catch (error) {
+                    console.error('Failed to save task:', error);
+                    this.showFormError(error.message);
+                }
+            }
+
+            validateForm(formData) {
+                let isValid = true;
+                this.clearFormErrors();
+                
+                // Validate title
+                const title = formData.get('title').trim();
+                if (!title) {
+                    this.showFieldError('title-error', 'Title is required');
+                    isValid = false;
+                } else if (title.length > 200) {
+                    this.showFieldError('title-error', 'Title cannot exceed 200 characters');
+                    isValid = false;
+                }
+                
+                // Validate description
+                const description = formData.get('description').trim();
+                if (description && description.length > 2000) {
+                    this.showFieldError('description-error', 'Description cannot exceed 2000 characters');
+                    isValid = false;
+                }
+                
+                // Validate estimated duration
+                const duration = formData.get('estimatedDuration');
+                if (duration && (isNaN(duration) || parseInt(duration) < 0 || parseInt(duration) > 9999)) {
+                    this.showFieldError('estimated-duration-error', 'Duration must be between 0 and 9999 minutes');
+                    isValid = false;
+                }
+                
+                return isValid;
+            }
+
+            validateField(field) {
+                const errorElement = document.getElementById(`${field.name}-error`);
+                if (!errorElement) return;
+                
+                let errorMessage = '';
+                
+                switch (field.name) {
+                    case 'title':
+                        if (!field.value.trim()) {
+                            errorMessage = 'Title is required';
+                        } else if (field.value.length > 200) {
+                            errorMessage = 'Title cannot exceed 200 characters';
+                        }
+                        break;
+                        
+                    case 'description':
+                        if (field.value.length > 2000) {
+                            errorMessage = 'Description cannot exceed 2000 characters';
+                        }
+                        break;
+                        
+                    case 'estimatedDuration':
+                        if (field.value && (isNaN(field.value) || parseInt(field.value) < 0 || parseInt(field.value) > 9999)) {
+                            errorMessage = 'Duration must be between 0 and 9999 minutes';
+                        }
+                        break;
+                }
+                
+                errorElement.textContent = errorMessage;
+                errorElement.style.display = errorMessage ? 'block' : 'none';
+            }
+
+            showFieldError(errorId, message) {
+                const errorElement = document.getElementById(errorId);
+                if (errorElement) {
+                    errorElement.textContent = message;
+                    errorElement.style.display = 'block';
+                }
+            }
+
+            showFormError(message) {
+                const errorElement = document.getElementById('form-general-error');
+                if (errorElement) {
+                    errorElement.textContent = message;
+                    errorElement.style.display = 'block';
+                }
+            }
+
+            clearFormErrors() {
+                const errorElements = this.overlay.querySelectorAll('.form-error');
+                errorElements.forEach(element => {
+                    element.textContent = '';
+                    element.style.display = 'none';
+                });
+            }
+
+            formatDateForInput(dateString) {
+                const date = new Date(dateString);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                
+                return `${year}-${month}-${day}T${hours}:${minutes}`;
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
+        /**
+         * CalendarComponent - Handles calendar display and task integration
+         */
+        class CalendarComponent {
+            constructor() {
+                this.container = document.querySelector('.calendar-view');
+                this.currentDate = new Date();
+                this.selectedDate = null;
+                this.isInitialized = false;
+
+                if (!this.container) {
+                    console.error('Calendar container not found');
+                    return;
+                }
+
+                this.monthNames = [
+                    'January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December'
+                ];
+
+                this.dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+                this.init();
+                console.info('CalendarComponent initialized');
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.setupTaskManagerObserver();
+                this.render();
+                this.isInitialized = true;
+            }
+
+            setupEventListeners() {
+                // Navigation button event listeners
+                const prevButton = document.querySelector('.calendar-header .btn[aria-label="Previous month"]');
+                const nextButton = document.querySelector('.calendar-header .btn[aria-label="Next month"]');
+                const todayButton = document.getElementById('today-btn');
+
+                if (prevButton) {
+                    prevButton.addEventListener('click', () => this.previousMonth());
+                }
+
+                if (nextButton) {
+                    nextButton.addEventListener('click', () => this.nextMonth());
+                }
+
+                if (todayButton) {
+                    todayButton.addEventListener('click', () => this.goToToday());
+                }
+
+                // Keyboard navigation
+                document.addEventListener('keydown', (event) => {
+                    if (!this.container.contains(document.activeElement)) return;
+
+                    switch (event.key) {
+                        case 'ArrowLeft':
+                            event.preventDefault();
+                            this.navigateDate(-1);
+                            break;
+                        case 'ArrowRight':
+                            event.preventDefault();
+                            this.navigateDate(1);
+                            break;
+                        case 'ArrowUp':
+                            event.preventDefault();
+                            this.navigateDate(-7);
+                            break;
+                        case 'ArrowDown':
+                            event.preventDefault();
+                            this.navigateDate(7);
+                            break;
+                        case 'Enter':
+                        case ' ':
+                            event.preventDefault();
+                            if (this.selectedDate) {
+                                this.handleDateClick(this.selectedDate);
+                            }
+                            break;
+                        case 'Home':
+                            event.preventDefault();
+                            this.goToToday();
+                            break;
+                    }
+                });
+            }
+
+            setupTaskManagerObserver() {
+                // Set up observer when taskManager is available
+                const setupObserver = () => {
+                    if (window.taskManager) {
+                        window.taskManager.on('taskAdded', () => this.refreshCalendar());
+                        window.taskManager.on('taskUpdated', () => this.refreshCalendar());
+                        window.taskManager.on('taskDeleted', () => this.refreshCalendar());
+                    } else {
+                        // TaskManager not ready yet, try again after a short delay
+                        setTimeout(setupObserver, 100);
+                    }
+                };
+                
+                setupObserver();
+            }
+
+            render() {
+                this.container.innerHTML = this.generateCalendarHTML();
+                this.attachDateClickHandlers();
+            }
+
+            generateCalendarHTML() {
+                const year = this.currentDate.getFullYear();
+                const month = this.currentDate.getMonth();
+                const today = new Date();
+                
+                // Update header with current month/year
+                this.updateHeader();
+
+                // Generate calendar grid
+                let html = '<div class="calendar-grid">';
+
+                // Add day headers
+                this.dayNames.forEach(day => {
+                    html += `<div class="calendar-day-header">${day}</div>`;
+                });
+
+                // Get first day of month and number of days
+                const firstDay = new Date(year, month, 1);
+                const lastDay = new Date(year, month + 1, 0);
+                const startDate = new Date(firstDay);
+                startDate.setDate(startDate.getDate() - firstDay.getDay());
+
+                // Generate 42 days (6 weeks)
+                for (let i = 0; i < 42; i++) {
+                    const date = new Date(startDate);
+                    date.setDate(startDate.getDate() + i);
+                    
+                    const dateString = this.formatDateString(date);
+                    const isCurrentMonth = date.getMonth() === month;
+                    const isToday = this.isSameDay(date, today);
+                    const isSelected = this.selectedDate && this.isSameDay(date, this.selectedDate);
+
+                    // Get tasks for this date
+                    const tasks = this.getTasksForDate(date);
+                    const hasOverdue = tasks.some(task => task.isOverdue());
+                    const taskCount = tasks.length;
+
+                    let classes = ['calendar-date'];
+                    if (!isCurrentMonth) classes.push('calendar-date--other-month');
+                    if (isToday) classes.push('calendar-date--today');
+                    if (isSelected) classes.push('calendar-date--selected');
+                    if (tasks.length > 0) classes.push('calendar-date--has-tasks');
+
+                    html += `
+                        <button class="${classes.join(' ')}" 
+                                data-date="${dateString}" 
+                                tabindex="${isCurrentMonth ? '0' : '-1'}"
+                                aria-label="${this.getDateAriaLabel(date, tasks)}">
+                            <span class="calendar-date-number">${date.getDate()}</span>
+                            ${this.generateTaskIndicators(tasks)}
+                            ${taskCount > 0 ? `<span class="calendar-task-count${hasOverdue ? ' calendar-task-count--overdue' : ''}">${taskCount}</span>` : ''}
+                        </button>
+                    `;
+                }
+
+                html += '</div>';
+                return html;
+            }
+
+            updateHeader() {
+                const headerElement = document.querySelector('.calendar-header h2');
+                if (headerElement) {
+                    const monthYear = `${this.monthNames[this.currentDate.getMonth()]} ${this.currentDate.getFullYear()}`;
+                    headerElement.innerHTML = `Calendar - <span class="calendar-month-year">${monthYear}</span>`;
+                }
+            }
+
+            generateTaskIndicators(tasks) {
+                if (tasks.length === 0) return '';
+
+                const indicators = tasks.slice(0, 3).map(task => {
+                    let dotClass = 'calendar-task-dot';
+                    if (task.completed) {
+                        dotClass += ' calendar-task-dot--completed';
+                    } else if (task.isOverdue()) {
+                        dotClass += ' calendar-task-dot--overdue';
+                    } else if (task.priority === 'high' || task.priority === 'urgent') {
+                        dotClass += ' calendar-task-dot--high-priority';
+                    }
+                    return `<span class="${dotClass}"></span>`;
+                }).join('');
+
+                return `<div class="calendar-task-indicators">${indicators}</div>`;
+            }
+
+            attachDateClickHandlers() {
+                const dateButtons = this.container.querySelectorAll('.calendar-date');
+                dateButtons.forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        const dateString = event.currentTarget.dataset.date;
+                        const date = new Date(dateString);
+                        this.handleDateClick(date);
+                    });
+                });
+            }
+
+            handleDateClick(date) {
+                this.selectedDate = date;
+                this.render();
+                
+                // Emit event for other components to listen to
+                const customEvent = new CustomEvent('calendarDateSelected', {
+                    detail: { 
+                        date: date,
+                        tasks: this.getTasksForDate(date)
+                    }
+                });
+                document.dispatchEvent(customEvent);
+
+                console.log('Calendar date selected:', date, this.getTasksForDate(date));
+            }
+
+            getTasksForDate(date) {
+                if (!window.taskManager || typeof window.taskManager.findByDate !== 'function') {
+                    return [];
+                }
+                try {
+                    return window.taskManager.findByDate(date);
+                } catch (error) {
+                    console.warn('Error getting tasks for date:', error);
+                    return [];
+                }
+            }
+
+            navigateDate(days) {
+                if (!this.selectedDate) {
+                    this.selectedDate = new Date();
+                }
+                this.selectedDate.setDate(this.selectedDate.getDate() + days);
+                
+                // Update current month if needed
+                if (this.selectedDate.getMonth() !== this.currentDate.getMonth() || 
+                    this.selectedDate.getFullYear() !== this.currentDate.getFullYear()) {
+                    this.currentDate = new Date(this.selectedDate);
+                }
+                
+                this.render();
+            }
+
+            previousMonth() {
+                this.currentDate.setMonth(this.currentDate.getMonth() - 1);
+                this.render();
+            }
+
+            nextMonth() {
+                this.currentDate.setMonth(this.currentDate.getMonth() + 1);
+                this.render();
+            }
+
+            goToToday() {
+                this.currentDate = new Date();
+                this.selectedDate = new Date();
+                this.render();
+            }
+
+            refreshCalendar() {
+                if (this.isInitialized) {
+                    this.render();
+                }
+            }
+
+            // Utility methods
+            formatDateString(date) {
+                return date.toISOString().split('T')[0];
+            }
+
+            isSameDay(date1, date2) {
+                return date1.getFullYear() === date2.getFullYear() &&
+                       date1.getMonth() === date2.getMonth() &&
+                       date1.getDate() === date2.getDate();
+            }
+
+            getDateAriaLabel(date, tasks) {
+                const dateStr = date.toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+                
+                if (tasks.length === 0) {
+                    return `${dateStr}, no tasks`;
+                }
+                
+                const taskCount = tasks.length;
+                const overdue = tasks.filter(task => task.isOverdue()).length;
+                const completed = tasks.filter(task => task.completed).length;
+                
+                let label = `${dateStr}, ${taskCount} task${taskCount > 1 ? 's' : ''}`;
+                if (overdue > 0) {
+                    label += `, ${overdue} overdue`;
+                }
+                if (completed > 0) {
+                    label += `, ${completed} completed`;
+                }
+                
+                return label;
+            }
+
+            // Public API
+            setMonth(month, year) {
+                this.currentDate = new Date(year, month, 1);
+                this.render();
+            }
+
+            selectDate(date) {
+                this.selectedDate = new Date(date);
+                if (this.selectedDate.getMonth() !== this.currentDate.getMonth() || 
+                    this.selectedDate.getFullYear() !== this.currentDate.getFullYear()) {
+                    this.currentDate = new Date(this.selectedDate);
+                }
+                this.render();
+            }
+
+            getSelectedDate() {
+                return this.selectedDate;
+            }
+
+            getCurrentMonth() {
+                return {
+                    month: this.currentDate.getMonth(),
+                    year: this.currentDate.getFullYear()
+                };
+            }
+        }
+
+        // ================================
         // SYSTEM INITIALIZATION
         // ================================
         
@@ -3780,10 +5181,15 @@
                 // Consider service worker registration
                 considerServiceWorker();
 
-                // Remove loading states and show empty states
-                document.querySelectorAll('.loading-state').forEach(el => {
-                    el.classList.add('hidden');
-                });
+                // Initialize UI Manager after data layer is ready
+                window.uiManager = new UIManager();
+                
+                // Add UI components to global object for development access
+                window.CCPM.taskListComponent = window.uiManager.taskListComponent;
+                window.CCPM.taskFormComponent = window.uiManager.taskFormComponent;
+                window.CCPM.calendarComponent = window.uiManager.calendarComponent;
+                
+                console.info('CCPM Todo List UI initialized successfully');
 
             } catch (error) {
                 console.error('Failed to initialize CCPM Todo List:', error);
