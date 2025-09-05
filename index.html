@@ -229,9 +229,238 @@
             border-bottom: 1px solid var(--color-border-light);
         }
 
+        /* FilterBar Styles */
+        .filter-bar {
+            background-color: var(--color-background-secondary);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-lg);
+            border: 1px solid var(--color-border-light);
+        }
+
+        .filter-row {
+            display: flex;
+            gap: var(--space-md);
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: var(--space-md);
+        }
+
+        .filter-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .search-input-container {
+            position: relative;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: var(--space-sm) var(--space-md);
+            padding-left: var(--space-xl);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            transition: border-color var(--transition-fast);
+            background-color: var(--color-background);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-primary-light);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: var(--space-sm);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-text-muted);
+            width: 16px;
+            height: 16px;
+        }
+
+        .search-clear {
+            position: absolute;
+            right: var(--space-sm);
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            padding: var(--space-xs);
+            border-radius: var(--radius-sm);
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+        }
+
+        .search-input:not(:placeholder-shown) + .search-icon + .search-clear {
+            opacity: 1;
+        }
+
+        .search-clear:hover {
+            background-color: var(--color-background-secondary);
+            color: var(--color-text-primary);
+        }
+
+        .filter-select {
+            padding: var(--space-sm) var(--space-md);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            background-color: var(--color-background);
+            font-size: var(--text-sm);
+            min-width: 120px;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-primary-light);
+        }
+
+        .filter-select.multi-select {
+            min-width: 150px;
+        }
+
+        .date-range-inputs {
+            display: flex;
+            gap: var(--space-sm);
+            align-items: center;
+        }
+
+        .date-range-inputs input {
+            padding: var(--space-sm);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            background-color: var(--color-background);
+            font-size: var(--text-sm);
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: var(--space-sm);
+            align-items: center;
+        }
+
+        .filter-preset-buttons {
+            display: flex;
+            gap: var(--space-xs);
+            flex-wrap: wrap;
+        }
+
+        .preset-button {
+            padding: var(--space-xs) var(--space-sm);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            background-color: var(--color-background);
+            color: var(--color-text-secondary);
+            font-size: var(--text-xs);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            white-space: nowrap;
+        }
+
+        .preset-button:hover {
+            background-color: var(--color-primary-light);
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+
+        .preset-button.active {
+            background-color: var(--color-primary);
+            border-color: var(--color-primary);
+            color: white;
+        }
+
+        .active-filters {
+            display: flex;
+            gap: var(--space-xs);
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-xs) var(--space-sm);
+            background-color: var(--color-primary-light);
+            color: var(--color-primary);
+            border-radius: var(--radius-sm);
+            font-size: var(--text-xs);
+            font-weight: var(--font-medium);
+        }
+
+        .filter-tag-remove {
+            background: none;
+            border: none;
+            color: var(--color-primary);
+            cursor: pointer;
+            padding: 0;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color var(--transition-fast);
+        }
+
+        .filter-tag-remove:hover {
+            background-color: var(--color-primary);
+            color: white;
+        }
+
+        .filter-results-info {
+            font-size: var(--text-xs);
+            color: var(--color-text-muted);
+            padding: var(--space-sm) 0;
+        }
+
+        .search-highlight {
+            background-color: yellow;
+            padding: 1px 2px;
+            border-radius: 2px;
+            font-weight: var(--font-medium);
+        }
+
         .task-list {
             min-height: 300px;
             position: relative;
+        }
+
+        /* Mobile FilterBar adjustments */
+        @media (max-width: 767px) {
+            .filter-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: var(--space-sm);
+            }
+
+            .search-input-container {
+                min-width: auto;
+            }
+
+            .date-range-inputs {
+                flex-direction: column;
+                gap: var(--space-sm);
+            }
+
+            .date-range-inputs input {
+                width: 100%;
+            }
+
+            .filter-preset-buttons {
+                justify-content: center;
+            }
+
+            .active-filters {
+                justify-content: center;
+            }
         }
 
         /* Calendar Section */
@@ -490,6 +719,333 @@
             position: relative;
         }
 
+        /* Daily Review Interface Styles */
+        .daily-review {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-lg);
+        }
+
+        .review-date-selector {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-md);
+            background-color: var(--color-background-secondary);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+        }
+
+        .review-date-display {
+            font-weight: var(--font-semibold);
+            color: var(--color-text-primary);
+            font-size: var(--text-lg);
+        }
+
+        .review-date-controls {
+            display: flex;
+            gap: var(--space-xs);
+        }
+
+        /* Progress Statistics */
+        .review-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .review-stat-card {
+            background-color: var(--color-background-secondary);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            text-align: center;
+            transition: transform var(--transition-fast);
+        }
+
+        .review-stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .review-stat-number {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--color-primary);
+            margin-bottom: var(--space-xs);
+        }
+
+        .review-stat-label {
+            font-size: var(--text-sm);
+            color: var(--color-text-secondary);
+            font-weight: var(--font-medium);
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .review-stat-card.completed .review-stat-number {
+            color: var(--color-success);
+        }
+
+        .review-stat-card.overdue .review-stat-number {
+            color: var(--color-error);
+        }
+
+        .review-stat-card.pending .review-stat-number {
+            color: var(--color-warning);
+        }
+
+        /* Progress Visualization */
+        .review-progress {
+            margin-bottom: var(--space-lg);
+        }
+
+        .review-progress-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-md);
+        }
+
+        .review-progress-bar-container {
+            background-color: var(--color-border-light);
+            border-radius: var(--radius-lg);
+            height: 20px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: var(--space-sm);
+        }
+
+        .review-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-success) 0%, var(--color-primary) 100%);
+            border-radius: var(--radius-lg);
+            transition: width 0.8s ease-in-out;
+            position: relative;
+        }
+
+        .review-progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 50%, rgba(255,255,255,0.2) 100%);
+            animation: progress-shimmer 2s infinite;
+        }
+
+        @keyframes progress-shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .review-progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: var(--text-sm);
+            color: var(--color-text-secondary);
+        }
+
+        /* Weekly Trends Chart */
+        .review-trends {
+            margin-bottom: var(--space-lg);
+        }
+
+        .review-trends-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-md);
+        }
+
+        .review-trends-chart {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            height: 120px;
+            background-color: var(--color-background-secondary);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            gap: var(--space-xs);
+        }
+
+        .review-trend-bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            max-width: 30px;
+        }
+
+        .review-trend-column {
+            width: 100%;
+            background-color: var(--color-primary);
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+            min-height: 4px;
+            transition: all var(--transition-normal);
+            position: relative;
+            opacity: 0.8;
+        }
+
+        .review-trend-column:hover {
+            opacity: 1;
+            transform: scaleY(1.05);
+        }
+
+        .review-trend-column.high-completion {
+            background-color: var(--color-success);
+        }
+
+        .review-trend-column.low-completion {
+            background-color: var(--color-error);
+        }
+
+        .review-trend-label {
+            font-size: var(--text-xs);
+            color: var(--color-text-muted);
+            margin-top: var(--space-xs);
+            text-align: center;
+        }
+
+        /* Reflection Notes */
+        .review-reflection {
+            background-color: var(--color-background-secondary);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+        }
+
+        .review-reflection-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .review-reflection-textarea {
+            width: 100%;
+            min-height: 100px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            font-family: inherit;
+            font-size: var(--text-base);
+            line-height: var(--leading-relaxed);
+            resize: vertical;
+            background-color: var(--color-background);
+            transition: border-color var(--transition-fast);
+        }
+
+        .review-reflection-textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-primary-light);
+        }
+
+        .review-reflection-textarea::placeholder {
+            color: var(--color-text-muted);
+            font-style: italic;
+        }
+
+        .review-reflection-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: var(--space-md);
+        }
+
+        .review-reflection-save-status {
+            font-size: var(--text-sm);
+            color: var(--color-text-muted);
+            font-style: italic;
+        }
+
+        .review-reflection-save-status.saved {
+            color: var(--color-success);
+        }
+
+        .review-reflection-save-status.saving {
+            color: var(--color-warning);
+        }
+
+        /* Achievement Badges */
+        .review-achievements {
+            display: flex;
+            gap: var(--space-sm);
+            flex-wrap: wrap;
+            margin-bottom: var(--space-lg);
+        }
+
+        .review-achievement-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-xs) var(--space-sm);
+            background-color: var(--color-success);
+            color: white;
+            border-radius: var(--radius-lg);
+            font-size: var(--text-xs);
+            font-weight: var(--font-medium);
+            animation: badge-appear 0.5s ease-in-out;
+        }
+
+        @keyframes badge-appear {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .review-achievement-badge.streak {
+            background-color: var(--color-warning);
+        }
+
+        .review-achievement-badge.productivity {
+            background-color: var(--color-info);
+        }
+
+        /* Mobile responsiveness for review section */
+        @media (max-width: 767px) {
+            .review-stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--space-sm);
+            }
+
+            .review-trends-chart {
+                height: 100px;
+                padding: var(--space-sm);
+            }
+
+            .review-reflection {
+                padding: var(--space-md);
+            }
+
+            .review-reflection-textarea {
+                min-height: 80px;
+                font-size: var(--text-sm);
+            }
+
+            .review-date-selector {
+                flex-direction: column;
+                gap: var(--space-sm);
+                text-align: center;
+            }
+
+            .review-achievements {
+                justify-content: center;
+            }
+        }
+
         /* Footer */
         .app-footer {
             grid-area: footer;
@@ -499,6 +1055,205 @@
             text-align: center;
             color: var(--color-text-secondary);
             font-size: var(--text-sm);
+        }
+
+        /* Enhanced Loading States and Visual Feedback */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(2px);
+        }
+
+        .loading-content {
+            text-align: center;
+            padding: var(--space-xl);
+        }
+
+        .loading-text {
+            margin-top: var(--space-md);
+            font-size: var(--text-lg);
+            color: var(--color-text-secondary);
+        }
+
+        /* Button loading states */
+        .btn.loading {
+            position: relative;
+            color: transparent;
+            cursor: not-allowed;
+        }
+
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 16px;
+            height: 16px;
+            margin: -8px 0 0 -8px;
+            border: 2px solid currentColor;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* Input loading states */
+        .form-group.loading {
+            position: relative;
+        }
+
+        .form-group.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            width: 16px;
+            height: 16px;
+            margin-top: -8px;
+            border: 2px solid var(--color-border);
+            border-top-color: var(--color-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* Progress indicators */
+        .progress-indicator {
+            width: 100%;
+            height: 4px;
+            background-color: var(--color-border-light);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: var(--space-md);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--color-primary);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+
+        .progress-bar.indeterminate {
+            width: 30%;
+            animation: indeterminateProgress 2s infinite linear;
+        }
+
+        @keyframes indeterminateProgress {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(400%); }
+        }
+
+        /* Success/Error feedback */
+        .feedback-overlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--color-background);
+            padding: var(--space-xl);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            z-index: 10001;
+            text-align: center;
+            min-width: 200px;
+        }
+
+        .feedback-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto var(--space-md);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-2xl);
+        }
+
+        .feedback-icon.success {
+            background-color: var(--color-success);
+            color: white;
+        }
+
+        .feedback-icon.error {
+            background-color: var(--color-error);
+            color: white;
+        }
+
+        .feedback-icon.warning {
+            background-color: var(--color-warning);
+            color: white;
+        }
+
+        /* Interactive feedback */
+        .btn-interactive {
+            transform: scale(1);
+            transition: transform 0.1s ease;
+        }
+
+        .btn-interactive:active {
+            transform: scale(0.95);
+        }
+
+        .btn-interactive.success {
+            background-color: var(--color-success) !important;
+            animation: successPulse 0.6s ease;
+        }
+
+        @keyframes successPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Notification styles */
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .notification-message {
+            flex: 1;
+            line-height: var(--leading-relaxed);
+        }
+
+        .notification-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+            font-size: var(--text-xs);
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .notification-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .notification-dismiss {
+            background: none;
+            border: none;
+            color: white;
+            font-size: var(--text-lg);
+            cursor: pointer;
+            padding: var(--space-xs);
+            line-height: 1;
+            opacity: 0.8;
+            transition: opacity 0.2s ease;
+        }
+
+        .notification-dismiss:hover {
+            opacity: 1;
         }
 
         /* Loading States */
@@ -512,17 +1267,265 @@
             gap: var(--space-md);
         }
 
-        .loading-spinner {
-            width: 32px;
-            height: 32px;
-            border: 3px solid var(--color-border);
-            border-top-color: var(--color-primary);
+        .loading-state.inline {
+            height: auto;
+            padding: var(--space-lg);
+            background-color: var(--color-background-secondary);
+            border-radius: var(--radius-md);
+            margin: var(--space-md) 0;
+        }
+
+        /* Enhanced Animations and Micro-interactions */
+        @keyframes slideInFromTop {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInFromBottom {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInFromLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInFromRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% {
+                animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+                transform: translate3d(0,0,0);
+            }
+            40%, 43% {
+                animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+                transform: translate3d(0, -10px, 0);
+            }
+            70% {
+                animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+                transform: translate3d(0, -5px, 0);
+            }
+            90% {
+                transform: translate3d(0,-2px,0);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Apply animations to elements */
+        .app-header {
+            animation: slideInFromTop 0.6s ease-out;
+        }
+
+        .task-section {
+            animation: slideInFromLeft 0.6s ease-out 0.1s both;
+        }
+
+        .calendar-section {
+            animation: slideInFromRight 0.6s ease-out 0.2s both;
+        }
+
+        .review-section {
+            animation: slideInFromBottom 0.6s ease-out 0.3s both;
+        }
+
+        .task-item {
+            animation: slideInFromLeft 0.4s ease-out;
+            transition: all var(--transition-fast);
+        }
+
+        .task-item:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .task-form-overlay {
+            animation: fadeIn var(--transition-normal);
+        }
+
+        .task-form-overlay.active .task-form-modal {
+            animation: scaleIn var(--transition-normal);
+        }
+
+        .btn {
+            transition: all var(--transition-fast);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
             border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Success/Error state animations */
+        .task-item.completing {
+            animation: bounce 0.8s;
+        }
+
+        .task-item.error {
+            animation: shake 0.5s;
+        }
+
+        .notification {
+            animation: slideInFromRight 0.3s ease-out;
+        }
+
+        .notification.removing {
+            animation: slideInFromRight 0.3s ease-in reverse;
+        }
+
+        /* Loading animations */
+        .loading-state {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .loading-spinner {
             animation: spin 1s linear infinite;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        /* Form field animations */
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            animation: pulse 0.3s ease-in-out;
+        }
+
+        /* Calendar date hover effects */
+        .calendar-date {
+            transition: all var(--transition-fast);
+        }
+
+        .calendar-date:hover {
+            transform: scale(1.05);
+            z-index: 1;
+        }
+
+        .calendar-date:active {
+            transform: scale(0.95);
+        }
+
+        /* Task priority indicators with pulsing */
+        .task-priority.urgent {
+            animation: pulse 2s infinite;
+        }
+
+        /* Checkbox animations */
+        input[type="checkbox"] {
+            transition: all var(--transition-fast);
+        }
+
+        input[type="checkbox"]:checked {
+            animation: bounce 0.4s;
+        }
+
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Progress indication animations */
+        .progress-bar {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
         }
 
         /* Empty States */
@@ -556,7 +1559,7 @@
             line-height: var(--leading-relaxed);
         }
 
-        /* Utility Classes */
+        /* Accessibility Classes */
         .sr-only {
             position: absolute;
             width: 1px;
@@ -567,6 +1570,68 @@
             clip: rect(0, 0, 0, 0);
             white-space: nowrap;
             border: 0;
+        }
+
+        /* Skip Links */
+        .skip-links {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+        }
+
+        .skip-link {
+            position: absolute;
+            left: -10000px;
+            top: auto;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            background-color: var(--color-primary);
+            color: white;
+            padding: var(--space-sm) var(--space-md);
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            font-weight: var(--font-medium);
+            font-size: var(--text-sm);
+            box-shadow: var(--shadow-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .skip-link:focus {
+            position: static;
+            width: auto;
+            height: auto;
+            left: auto;
+            top: auto;
+        }
+
+        .skip-link:hover,
+        .skip-link:focus {
+            background-color: var(--color-primary-hover);
+            outline: 2px solid white;
+            outline-offset: 2px;
+        }
+
+        /* Focus Visible Support */
+        *:focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+            border-radius: var(--radius-sm);
+        }
+
+        /* High contrast focus indicators */
+        @media (prefers-contrast: high) {
+            *:focus-visible {
+                outline: 3px solid currentColor;
+                outline-offset: 3px;
+            }
+            
+            .skip-link:focus {
+                outline: 3px solid white;
+                outline-offset: 3px;
+            }
         }
 
         .hidden {
@@ -917,12 +1982,21 @@
             animation-play-state: paused;
         }
 
-        /* Reduced motion for better performance */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive animation performance optimization */
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
                 animation-duration: 0.01ms !important;
                 animation-iteration-count: 1 !important;
                 transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+            
+            .loading-spinner {
+                animation: none !important;
             }
         }
 
@@ -1287,15 +2361,20 @@
     </style>
 </head>
 <body>
-    <!-- Skip to main content link for accessibility -->
-    <a href="#main-content" class="sr-only">Skip to main content</a>
+    <!-- Skip navigation links for accessibility -->
+    <div class="skip-links">
+        <a href="#main-content" class="skip-link">Skip to main content</a>
+        <a href="#tasks-heading" class="skip-link">Skip to tasks</a>
+        <a href="#calendar-heading" class="skip-link">Skip to calendar</a>
+        <a href="#review-heading" class="skip-link">Skip to daily review</a>
+    </div>
 
     <div class="app-container">
         <!-- Application Header -->
         <header class="app-header" role="banner">
             <div class="header-content">
                 <h1 class="app-title">CCPM Todo List</h1>
-                <nav class="header-actions" role="navigation" aria-label="Main navigation">
+                <nav class="header-actions" role="navigation" aria-label="Main navigation and actions">
                     <div class="import-export-actions">
                         <button class="btn btn-secondary" type="button" id="export-btn" aria-label="Export data to JSON file">
                             Export
@@ -1324,16 +2403,112 @@
                         <div class="task-header">
                             <h2 id="tasks-heading">My Tasks</h2>
                             <div class="header-actions">
-                                <button class="btn btn-secondary" type="button" aria-label="Filter tasks">
-                                    Filter
+                                <button class="btn btn-secondary" type="button" id="toggle-filter-bar" aria-label="Toggle filter bar">
+                                    Filter & Search
                                 </button>
-                                <button class="btn btn-secondary" type="button" aria-label="Sort tasks">
-                                    Sort
+                                <button class="btn btn-secondary" type="button" id="clear-all-filters" aria-label="Clear all filters">
+                                    Clear Filters
                                 </button>
                             </div>
                         </div>
                         
-                        <div class="task-list" role="region" aria-label="Task list">
+                        <!-- Filter Bar -->
+                        <div class="filter-bar" id="filter-bar">
+                            <!-- Search Row -->
+                            <div class="filter-row">
+                                <div class="search-input-container">
+                                    <input type="text" 
+                                           id="task-search" 
+                                           class="search-input" 
+                                           placeholder="Search tasks by title, description, or tags..."
+                                           aria-label="Search tasks">
+                                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <circle cx="11" cy="11" r="8"></circle>
+                                        <path d="m21 21-4.35-4.35"></path>
+                                    </svg>
+                                    <button class="search-clear" type="button" aria-label="Clear search">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Filter Controls Row -->
+                            <div class="filter-row">
+                                <select id="category-filter" class="filter-select" aria-label="Filter by category">
+                                    <option value="">All Categories</option>
+                                </select>
+                                
+                                <select id="priority-filter" class="filter-select multi-select" aria-label="Filter by priority" multiple>
+                                    <option value="low">Low</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="high">High</option>
+                                    <option value="urgent">Urgent</option>
+                                </select>
+                                
+                                <select id="status-filter" class="filter-select" aria-label="Filter by status">
+                                    <option value="">All Tasks</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="overdue">Overdue</option>
+                                </select>
+                                
+                                <select id="sort-by" class="filter-select" aria-label="Sort tasks by">
+                                    <option value="createdAt">Date Created</option>
+                                    <option value="dueDate">Due Date</option>
+                                    <option value="priority">Priority</option>
+                                    <option value="title">Title</option>
+                                    <option value="updatedAt">Last Updated</option>
+                                </select>
+                                
+                                <select id="sort-order" class="filter-select" aria-label="Sort order">
+                                    <option value="desc">Descending</option>
+                                    <option value="asc">Ascending</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Date Range Row -->
+                            <div class="filter-row">
+                                <label for="date-start" style="font-size: var(--text-sm); color: var(--color-text-secondary);">Due Date Range:</label>
+                                <div class="date-range-inputs">
+                                    <input type="date" id="date-start" aria-label="Start date">
+                                    <span style="color: var(--color-text-muted);">to</span>
+                                    <input type="date" id="date-end" aria-label="End date">
+                                </div>
+                            </div>
+                            
+                            <!-- Filter Presets and Actions Row -->
+                            <div class="filter-row">
+                                <div class="filter-preset-buttons">
+                                    <button type="button" class="preset-button" data-preset="today">Today</button>
+                                    <button type="button" class="preset-button" data-preset="this-week">This Week</button>
+                                    <button type="button" class="preset-button" data-preset="overdue">Overdue</button>
+                                    <button type="button" class="preset-button" data-preset="high-priority">High Priority</button>
+                                    <button type="button" class="preset-button" data-preset="my-tasks">My Tasks</button>
+                                </div>
+                                <div class="filter-actions">
+                                    <button type="button" id="save-filter-preset" class="btn btn-secondary" style="font-size: var(--text-xs);">Save Preset</button>
+                                    <button type="button" id="reset-filters" class="btn btn-secondary" style="font-size: var(--text-xs);">Reset</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Active Filters Row -->
+                            <div class="filter-row" id="active-filters-row" style="display: none;">
+                                <div class="active-filters" id="active-filters"></div>
+                            </div>
+                            
+                            <!-- Filter Results Info -->
+                            <div class="filter-results-info" id="filter-results-info">
+                                Showing all tasks
+                            </div>
+                        </div>
+                        
+                        <div class="task-list" role="region" aria-label="Task list" aria-live="polite" aria-describedby="task-status">
+                            <!-- Task status announcement for screen readers -->
+                            <div id="task-status" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
                             <!-- Loading State -->
                             <div class="loading-state hidden" id="tasks-loading" aria-live="polite">
                                 <div class="loading-spinner" aria-hidden="true"></div>
@@ -1370,7 +2545,12 @@
                             </div>
                         </div>
                         
-                        <div class="calendar-view" role="region" aria-label="Calendar view">
+                        <div class="calendar-view" role="region" aria-label="Calendar view" tabindex="0" aria-describedby="calendar-instructions">
+                            <!-- Calendar instructions for screen readers -->
+                            <div id="calendar-instructions" class="sr-only">
+                                Use arrow keys to navigate dates, Enter to select, Home to go to today.
+                            </div>
+
                             <!-- Loading State -->
                             <div class="loading-state hidden" id="calendar-loading" aria-live="polite">
                                 <div class="loading-spinner" aria-hidden="true"></div>
@@ -1404,7 +2584,7 @@
                             </div>
                         </div>
                         
-                        <div class="review-content" role="region" aria-label="Daily review content">
+                        <div class="review-content" role="region" aria-label="Daily review content" aria-live="polite">
                             <!-- Loading State -->
                             <div class="loading-state hidden" id="review-loading" aria-live="polite">
                                 <div class="loading-spinner" aria-hidden="true"></div>
@@ -2091,67 +3271,280 @@
             }
 
             // ================================
-            // SEARCH OPERATIONS
+            // ADVANCED SEARCH OPERATIONS
             // ================================
 
-            search(query) {
+            search(query, options = {}) {
                 if (!query || query.trim().length === 0) {
                     return this.getAll();
                 }
 
                 const searchTerm = query.toLowerCase().trim();
+                const { fuzzy = false, fields = ['title', 'description', 'tags'] } = options;
+                
+                if (fuzzy) {
+                    return this.fuzzySearch(searchTerm, fields);
+                }
+                
                 return this.find(task => {
-                    return task.title.toLowerCase().includes(searchTerm) ||
-                           task.description.toLowerCase().includes(searchTerm) ||
-                           task.tags.some(tag => tag.toLowerCase().includes(searchTerm));
+                    // Search in title
+                    if (fields.includes('title') && task.title.toLowerCase().includes(searchTerm)) {
+                        return true;
+                    }
+                    
+                    // Search in description
+                    if (fields.includes('description') && task.description.toLowerCase().includes(searchTerm)) {
+                        return true;
+                    }
+                    
+                    // Search in tags
+                    if (fields.includes('tags') && task.tags.some(tag => tag.toLowerCase().includes(searchTerm))) {
+                        return true;
+                    }
+                    
+                    // Search in category name
+                    if (fields.includes('category')) {
+                        const category = categoryManager.read(task.category);
+                        if (category && category.name.toLowerCase().includes(searchTerm)) {
+                            return true;
+                        }
+                    }
+                    
+                    return false;
                 });
             }
 
+            fuzzySearch(query, fields = ['title', 'description', 'tags']) {
+                const results = [];
+                const tasks = this.getAll();
+                
+                tasks.forEach(task => {
+                    let score = 0;
+                    let matches = [];
+                    
+                    // Check title
+                    if (fields.includes('title')) {
+                        const titleScore = this.calculateFuzzyScore(query, task.title.toLowerCase());
+                        if (titleScore > 0.3) {
+                            score += titleScore * 2; // Weight title higher
+                            matches.push({ field: 'title', score: titleScore });
+                        }
+                    }
+                    
+                    // Check description
+                    if (fields.includes('description') && task.description) {
+                        const descScore = this.calculateFuzzyScore(query, task.description.toLowerCase());
+                        if (descScore > 0.3) {
+                            score += descScore;
+                            matches.push({ field: 'description', score: descScore });
+                        }
+                    }
+                    
+                    // Check tags
+                    if (fields.includes('tags')) {
+                        task.tags.forEach(tag => {
+                            const tagScore = this.calculateFuzzyScore(query, tag.toLowerCase());
+                            if (tagScore > 0.4) {
+                                score += tagScore * 1.5; // Weight tags higher than description
+                                matches.push({ field: 'tags', score: tagScore, value: tag });
+                            }
+                        });
+                    }
+                    
+                    if (score > 0) {
+                        results.push({
+                            task,
+                            score,
+                            matches
+                        });
+                    }
+                });
+                
+                // Sort by relevance score
+                return results
+                    .sort((a, b) => b.score - a.score)
+                    .map(result => result.task);
+            }
+
+            calculateFuzzyScore(query, text) {
+                if (!query || !text) return 0;
+                
+                // Exact match gets highest score
+                if (text === query) return 1;
+                
+                // Contains gets high score
+                if (text.includes(query)) {
+                    return 0.8 - (text.length - query.length) / text.length * 0.3;
+                }
+                
+                // Fuzzy matching using simple algorithm
+                let matches = 0;
+                let queryIndex = 0;
+                
+                for (let i = 0; i < text.length && queryIndex < query.length; i++) {
+                    if (text[i] === query[queryIndex]) {
+                        matches++;
+                        queryIndex++;
+                    }
+                }
+                
+                const matchRatio = matches / query.length;
+                const lengthPenalty = Math.abs(text.length - query.length) / Math.max(text.length, query.length);
+                
+                return matchRatio > 0.6 ? matchRatio - lengthPenalty * 0.2 : 0;
+            }
+
+            highlightMatches(text, query) {
+                if (!query || !text) return text;
+                
+                const regex = new RegExp(`(${this.escapeRegExp(query)})`, 'gi');
+                return text.replace(regex, '<span class="search-highlight">$1</span>');
+            }
+
+            escapeRegExp(string) {
+                return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            }
+
             // ================================
-            // FILTER OPERATIONS
+            // ENHANCED FILTER OPERATIONS
             // ================================
 
             filter(filters) {
                 let results = this.getAll();
 
-                if (filters.completed !== undefined) {
-                    results = results.filter(task => task.completed === filters.completed);
+                // Text search
+                if (filters.search) {
+                    const searchOptions = {
+                        fuzzy: filters.fuzzySearch || false,
+                        fields: filters.searchFields || ['title', 'description', 'tags', 'category']
+                    };
+                    results = this.search(filters.search, searchOptions);
                 }
 
-                if (filters.category) {
-                    results = results.filter(task => task.category === filters.category);
+                // Status filtering
+                if (filters.status) {
+                    switch (filters.status) {
+                        case 'pending':
+                            results = results.filter(task => !task.completed);
+                            break;
+                        case 'completed':
+                            results = results.filter(task => task.completed);
+                            break;
+                        case 'overdue':
+                            results = results.filter(task => task.isOverdue());
+                            break;
+                    }
                 }
 
-                if (filters.priority) {
-                    const priorities = Array.isArray(filters.priority) ? filters.priority : [filters.priority];
+                // Category filtering
+                if (filters.categories && filters.categories.length > 0) {
+                    const categoryIds = Array.isArray(filters.categories) ? filters.categories : [filters.categories];
+                    results = results.filter(task => categoryIds.includes(task.category));
+                }
+
+                // Priority filtering (supports multiple priorities)
+                if (filters.priorities && filters.priorities.length > 0) {
+                    const priorities = Array.isArray(filters.priorities) ? filters.priorities : [filters.priorities];
                     results = results.filter(task => priorities.includes(task.priority));
                 }
 
+                // Tags filtering (supports multiple tags)
                 if (filters.tags && filters.tags.length > 0) {
                     results = results.filter(task => 
                         filters.tags.some(tag => task.tags.includes(tag))
                     );
                 }
 
+                // Due date range filtering
                 if (filters.dueDateStart) {
+                    const startDate = new Date(filters.dueDateStart);
+                    startDate.setHours(0, 0, 0, 0);
                     results = results.filter(task => 
-                        task.dueDate && new Date(task.dueDate) >= new Date(filters.dueDateStart)
+                        task.dueDate && new Date(task.dueDate) >= startDate
                     );
                 }
 
                 if (filters.dueDateEnd) {
+                    const endDate = new Date(filters.dueDateEnd);
+                    endDate.setHours(23, 59, 59, 999);
                     results = results.filter(task => 
-                        task.dueDate && new Date(task.dueDate) <= new Date(filters.dueDateEnd)
+                        task.dueDate && new Date(task.dueDate) <= endDate
                     );
                 }
 
+                // Created date range filtering
                 if (filters.createdAfter) {
                     results = results.filter(task => 
                         new Date(task.createdAt) >= new Date(filters.createdAfter)
                     );
                 }
 
+                if (filters.createdBefore) {
+                    results = results.filter(task => 
+                        new Date(task.createdAt) <= new Date(filters.createdBefore)
+                    );
+                }
+
+                // Duration filtering
+                if (filters.estimatedDurationMin !== undefined) {
+                    results = results.filter(task => 
+                        task.estimatedDuration !== null && task.estimatedDuration >= filters.estimatedDurationMin
+                    );
+                }
+
+                if (filters.estimatedDurationMax !== undefined) {
+                    results = results.filter(task => 
+                        task.estimatedDuration !== null && task.estimatedDuration <= filters.estimatedDurationMax
+                    );
+                }
+
                 return results;
+            }
+
+            // Quick filter presets
+            getFilterPresets() {
+                return {
+                    today: {
+                        dueDateStart: new Date().toISOString().split('T')[0],
+                        dueDateEnd: new Date().toISOString().split('T')[0],
+                        status: 'pending'
+                    },
+                    'this-week': {
+                        dueDateStart: this.getWeekStart().toISOString().split('T')[0],
+                        dueDateEnd: this.getWeekEnd().toISOString().split('T')[0],
+                        status: 'pending'
+                    },
+                    overdue: {
+                        status: 'overdue'
+                    },
+                    'high-priority': {
+                        priorities: ['high', 'urgent'],
+                        status: 'pending'
+                    },
+                    'my-tasks': {
+                        status: 'pending'
+                    },
+                    completed: {
+                        status: 'completed'
+                    }
+                };
+            }
+
+            getWeekStart() {
+                const date = new Date();
+                const diff = date.getDate() - date.getDay();
+                return new Date(date.setDate(diff));
+            }
+
+            getWeekEnd() {
+                const date = new Date();
+                const diff = date.getDate() - date.getDay() + 6;
+                return new Date(date.setDate(diff));
+            }
+
+            applyFilterPreset(presetName) {
+                const presets = this.getFilterPresets();
+                return presets[presetName] || {};
             }
 
             // ================================
@@ -3936,9 +5329,386 @@
             }
         }
 
-        // ================================
-        // UI LAYER IMPLEMENTATION
-        // ================================
+        /**
+         * Enhanced accessibility and keyboard navigation support
+         */
+        class AccessibilityManager {
+            constructor() {
+                this.currentFocus = null;
+                this.isInitialized = false;
+                this.announcements = document.getElementById('task-status');
+                this.trapFocus = null;
+                
+                this.init();
+            }
+
+            init() {
+                this.setupGlobalKeyboardHandlers();
+                this.setupFocusManagement();
+                this.setupScreenReaderAnnouncements();
+                this.isInitialized = true;
+                console.info('AccessibilityManager initialized');
+            }
+
+            setupGlobalKeyboardHandlers() {
+                document.addEventListener('keydown', (event) => {
+                    // Handle global keyboard shortcuts
+                    if (event.altKey || event.ctrlKey || event.metaKey) {
+                        this.handleAccessibilityShortcuts(event);
+                    }
+                    
+                    // Handle escape key for closing modals
+                    if (event.key === 'Escape') {
+                        this.handleEscapeKey();
+                    }
+                    
+                    // Handle tab navigation
+                    if (event.key === 'Tab') {
+                        this.handleTabNavigation(event);
+                    }
+                });
+            }
+
+            setupFocusManagement() {
+                // Enhance focus visibility
+                document.addEventListener('focusin', (event) => {
+                    this.currentFocus = event.target;
+                    this.enhanceFocusVisibility(event.target);
+                });
+
+                document.addEventListener('focusout', (event) => {
+                    this.removeFocusEnhancement(event.target);
+                });
+
+                // Handle click events to maintain focus appropriately
+                document.addEventListener('click', (event) => {
+                    const clickedElement = event.target.closest('button, [role="button"], input, select, textarea, a');
+                    if (clickedElement && !clickedElement.contains(document.activeElement)) {
+                        clickedElement.focus();
+                    }
+                });
+            }
+
+            setupScreenReaderAnnouncements() {
+                // Listen for task manager events and announce changes
+                if (window.taskManager) {
+                    window.taskManager.on('taskCreated', (task) => {
+                        this.announce(`Task created: ${task.title}`);
+                    });
+
+                    window.taskManager.on('taskUpdated', (task) => {
+                        const status = task.completed ? 'completed' : 'updated';
+                        this.announce(`Task ${status}: ${task.title}`);
+                    });
+
+                    window.taskManager.on('taskDeleted', (data) => {
+                        this.announce(`Task deleted: ${data.task.title}`);
+                    });
+                }
+            }
+
+            handleAccessibilityShortcuts(event) {
+                // Alt + 1: Focus tasks section
+                if (event.altKey && event.key === '1') {
+                    event.preventDefault();
+                    this.focusSection('tasks-heading');
+                    this.announce('Tasks section focused');
+                }
+                
+                // Alt + 2: Focus calendar section
+                if (event.altKey && event.key === '2') {
+                    event.preventDefault();
+                    this.focusSection('calendar-heading');
+                    this.announce('Calendar section focused');
+                }
+                
+                // Alt + 3: Focus review section
+                if (event.altKey && event.key === '3') {
+                    event.preventDefault();
+                    this.focusSection('review-heading');
+                    this.announce('Daily review section focused');
+                }
+                
+                // Ctrl/Cmd + N: New task (handled in UIManager)
+                // Ctrl/Cmd + F: Focus search/filter
+                if ((event.ctrlKey || event.metaKey) && event.key === 'f') {
+                    event.preventDefault();
+                    const filterBtn = document.querySelector('[aria-label="Filter tasks"]');
+                    if (filterBtn) {
+                        filterBtn.focus();
+                        this.announce('Filter focused');
+                    }
+                }
+            }
+
+            handleEscapeKey() {
+                // Close any open modals or dialogs
+                const openModal = document.querySelector('.task-form-overlay.active');
+                if (openModal) {
+                    this.closeFocusTrap();
+                    return;
+                }
+                
+                // If focus is trapped, release it
+                if (this.trapFocus) {
+                    this.closeFocusTrap();
+                    return;
+                }
+                
+                // Otherwise, return focus to main content
+                this.focusSection('main-content');
+            }
+
+            handleTabNavigation(event) {
+                // Implement focus trapping in modals
+                if (this.trapFocus) {
+                    const focusableElements = this.getFocusableElements(this.trapFocus);
+                    const firstElement = focusableElements[0];
+                    const lastElement = focusableElements[focusableElements.length - 1];
+
+                    if (event.shiftKey) {
+                        // Shift + Tab: going backwards
+                        if (document.activeElement === firstElement) {
+                            event.preventDefault();
+                            lastElement.focus();
+                        }
+                    } else {
+                        // Tab: going forwards
+                        if (document.activeElement === lastElement) {
+                            event.preventDefault();
+                            firstElement.focus();
+                        }
+                    }
+                }
+            }
+
+            focusSection(sectionId) {
+                const section = document.getElementById(sectionId);
+                if (section) {
+                    section.focus();
+                    if (section.scrollIntoView) {
+                        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            }
+
+            enhanceFocusVisibility(element) {
+                // Add enhanced focus styles for better visibility
+                element.classList.add('accessibility-focused');
+                
+                // Add temporary style for extra visibility
+                const style = document.createElement('style');
+                style.id = 'temp-focus-style';
+                style.textContent = `
+                    .accessibility-focused {
+                        box-shadow: 0 0 0 3px var(--color-primary), 0 0 10px rgba(37, 99, 235, 0.3) !important;
+                        transition: box-shadow 0.2s ease !important;
+                    }
+                `;
+                
+                if (!document.getElementById('temp-focus-style')) {
+                    document.head.appendChild(style);
+                }
+            }
+
+            removeFocusEnhancement(element) {
+                element.classList.remove('accessibility-focused');
+            }
+
+            announce(message, priority = 'polite') {
+                if (!this.announcements) return;
+                
+                // Clear previous announcement
+                this.announcements.textContent = '';
+                
+                // Set new announcement after a brief delay to ensure it's read
+                setTimeout(() => {
+                    this.announcements.textContent = message;
+                    this.announcements.setAttribute('aria-live', priority);
+                    
+                    // Clear announcement after 5 seconds to avoid clutter
+                    setTimeout(() => {
+                        if (this.announcements.textContent === message) {
+                            this.announcements.textContent = '';
+                        }
+                    }, 5000);
+                }, 100);
+            }
+
+            openFocusTrap(container) {
+                this.trapFocus = container;
+                this.previousFocus = document.activeElement;
+                
+                // Focus first focusable element in container
+                const focusableElements = this.getFocusableElements(container);
+                if (focusableElements.length > 0) {
+                    focusableElements[0].focus();
+                }
+                
+                this.announce('Modal opened. Use Tab to navigate, Escape to close.');
+            }
+
+            closeFocusTrap() {
+                if (this.trapFocus) {
+                    this.trapFocus = null;
+                    
+                    // Return focus to previous element
+                    if (this.previousFocus && document.contains(this.previousFocus)) {
+                        this.previousFocus.focus();
+                    }
+                    
+                    this.announce('Modal closed');
+                }
+            }
+
+            getFocusableElements(container) {
+                const focusableSelectors = [
+                    'button:not([disabled])',
+                    'input:not([disabled])',
+                    'select:not([disabled])', 
+                    'textarea:not([disabled])',
+                    'a[href]',
+                    '[tabindex]:not([tabindex="-1"])',
+                    '[role="button"]:not([disabled])'
+                ].join(', ');
+                
+                return Array.from(container.querySelectorAll(focusableSelectors))
+                    .filter(element => {
+                        return element.offsetParent !== null && // visible
+                               !element.hasAttribute('disabled') &&
+                               element.tabIndex !== -1;
+                    });
+            }
+
+            // Enhanced keyboard navigation for specific components
+            enableListNavigation(listElement) {
+                const items = Array.from(listElement.querySelectorAll('[role="listitem"], .task-item'));
+                let currentIndex = 0;
+
+                listElement.addEventListener('keydown', (event) => {
+                    switch (event.key) {
+                        case 'ArrowDown':
+                            event.preventDefault();
+                            currentIndex = Math.min(currentIndex + 1, items.length - 1);
+                            items[currentIndex].focus();
+                            break;
+                            
+                        case 'ArrowUp':
+                            event.preventDefault();
+                            currentIndex = Math.max(currentIndex - 1, 0);
+                            items[currentIndex].focus();
+                            break;
+                            
+                        case 'Home':
+                            event.preventDefault();
+                            currentIndex = 0;
+                            items[currentIndex].focus();
+                            break;
+                            
+                        case 'End':
+                            event.preventDefault();
+                            currentIndex = items.length - 1;
+                            items[currentIndex].focus();
+                            break;
+                    }
+                });
+                
+                // Update current index when items are focused by other means
+                items.forEach((item, index) => {
+                    item.addEventListener('focus', () => {
+                        currentIndex = index;
+                    });
+                });
+            }
+
+            // Validate accessibility compliance
+            validateAccessibility() {
+                const issues = [];
+                
+                // Check for missing alt text on images
+                document.querySelectorAll('img:not([alt])').forEach(img => {
+                    issues.push({ type: 'missing_alt', element: img });
+                });
+                
+                // Check for buttons without accessible names
+                document.querySelectorAll('button:not([aria-label]):not([title])').forEach(btn => {
+                    if (!btn.textContent.trim()) {
+                        issues.push({ type: 'missing_button_name', element: btn });
+                    }
+                });
+                
+                // Check for form inputs without labels
+                document.querySelectorAll('input:not([aria-label]):not([aria-labelledby])').forEach(input => {
+                    const id = input.id;
+                    if (!id || !document.querySelector(`label[for="${id}"]`)) {
+                        issues.push({ type: 'missing_label', element: input });
+                    }
+                });
+                
+                // Check color contrast (basic check)
+                const lowContrastElements = this.checkColorContrast();
+                issues.push(...lowContrastElements);
+                
+                return issues;
+            }
+
+            checkColorContrast() {
+                // Simplified contrast check - in production, use a proper library
+                const issues = [];
+                const elementsToCheck = document.querySelectorAll('button, a, .task-title, .form-label');
+                
+                elementsToCheck.forEach(element => {
+                    const styles = getComputedStyle(element);
+                    const bgColor = styles.backgroundColor;
+                    const textColor = styles.color;
+                    
+                    // Very basic contrast check (would need proper implementation)
+                    if (bgColor === 'rgba(0, 0, 0, 0)' && textColor.includes('rgb(156')) {
+                        issues.push({ type: 'low_contrast', element: element });
+                    }
+                });
+                
+                return issues;
+            }
+
+            generateAccessibilityReport() {
+                const issues = this.validateAccessibility();
+                const report = {
+                    timestamp: new Date().toISOString(),
+                    totalIssues: issues.length,
+                    issuesByType: {},
+                    recommendations: []
+                };
+                
+                // Group issues by type
+                issues.forEach(issue => {
+                    if (!report.issuesByType[issue.type]) {
+                        report.issuesByType[issue.type] = 0;
+                    }
+                    report.issuesByType[issue.type]++;
+                });
+                
+                // Add recommendations based on found issues
+                if (report.issuesByType.missing_alt) {
+                    report.recommendations.push('Add alt attributes to all images');
+                }
+                
+                if (report.issuesByType.missing_button_name) {
+                    report.recommendations.push('Add aria-label attributes to buttons without text');
+                }
+                
+                if (report.issuesByType.missing_label) {
+                    report.recommendations.push('Associate all form inputs with labels');
+                }
+                
+                if (report.issuesByType.low_contrast) {
+                    report.recommendations.push('Improve color contrast for better readability');
+                }
+                
+                console.info('Accessibility Report:', report);
+                return report;
+            }
+        }
 
         /**
          * UIManager - Main UI controller that coordinates all UI components
@@ -3959,6 +5729,9 @@
             }
 
             initializeComponents() {
+                // Initialize filter bar component first
+                this.filterBarComponent = new FilterBarComponent();
+                
                 // Initialize task list component
                 this.taskListComponent = new TaskListComponent();
                 
@@ -4769,8 +6542,598 @@
         }
 
         /**
-         * CalendarComponent - Handles calendar display and task integration
+         * FilterBarComponent - Handles advanced filtering and search functionality
          */
+        class FilterBarComponent {
+            constructor() {
+                this.container = document.getElementById('filter-bar');
+                this.searchDebounceTimer = null;
+                this.currentFilters = {};
+                this.savedPresets = this.loadSavedPresets();
+                
+                if (!this.container) {
+                    console.error('FilterBar container not found');
+                    return;
+                }
+
+                this.setupEventListeners();
+                this.setupFilterPersistence();
+                this.populateCategoryOptions();
+                this.restoreFilters();
+                
+                console.info('FilterBarComponent initialized');
+            }
+
+            setupEventListeners() {
+                // Search input with debouncing
+                const searchInput = document.getElementById('task-search');
+                if (searchInput) {
+                    searchInput.addEventListener('input', (event) => {
+                        this.debounceSearch(event.target.value);
+                    });
+                }
+
+                // Search clear button
+                const searchClear = this.container.querySelector('.search-clear');
+                if (searchClear) {
+                    searchClear.addEventListener('click', () => {
+                        this.clearSearch();
+                    });
+                }
+
+                // Filter selects
+                const filterSelects = this.container.querySelectorAll('.filter-select');
+                filterSelects.forEach(select => {
+                    select.addEventListener('change', () => {
+                        this.updateFilters();
+                    });
+                });
+
+                // Date inputs
+                const dateInputs = this.container.querySelectorAll('input[type="date"]');
+                dateInputs.forEach(input => {
+                    input.addEventListener('change', () => {
+                        this.updateFilters();
+                    });
+                });
+
+                // Preset buttons
+                const presetButtons = this.container.querySelectorAll('.preset-button');
+                presetButtons.forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        this.applyPreset(event.target.dataset.preset);
+                    });
+                });
+
+                // Filter action buttons
+                const resetButton = document.getElementById('reset-filters');
+                if (resetButton) {
+                    resetButton.addEventListener('click', () => {
+                        this.resetAllFilters();
+                    });
+                }
+
+                const clearAllButton = document.getElementById('clear-all-filters');
+                if (clearAllButton) {
+                    clearAllButton.addEventListener('click', () => {
+                        this.resetAllFilters();
+                    });
+                }
+
+                const toggleFilterBar = document.getElementById('toggle-filter-bar');
+                if (toggleFilterBar) {
+                    toggleFilterBar.addEventListener('click', () => {
+                        this.toggleFilterBar();
+                    });
+                }
+
+                const savePresetButton = document.getElementById('save-filter-preset');
+                if (savePresetButton) {
+                    savePresetButton.addEventListener('click', () => {
+                        this.saveCurrentAsPreset();
+                    });
+                }
+            }
+
+            debounceSearch(query) {
+                clearTimeout(this.searchDebounceTimer);
+                this.searchDebounceTimer = setTimeout(() => {
+                    this.currentFilters.search = query;
+                    this.applyFilters();
+                }, 300); // 300ms delay for better performance
+            }
+
+            clearSearch() {
+                const searchInput = document.getElementById('task-search');
+                if (searchInput) {
+                    searchInput.value = '';
+                    delete this.currentFilters.search;
+                    this.applyFilters();
+                }
+            }
+
+            updateFilters() {
+                // Get current filter values
+                const filters = {};
+
+                // Search query
+                const searchInput = document.getElementById('task-search');
+                if (searchInput && searchInput.value.trim()) {
+                    filters.search = searchInput.value.trim();
+                }
+
+                // Category filter
+                const categoryFilter = document.getElementById('category-filter');
+                if (categoryFilter && categoryFilter.value) {
+                    filters.categories = [categoryFilter.value];
+                }
+
+                // Priority filter (multi-select)
+                const priorityFilter = document.getElementById('priority-filter');
+                if (priorityFilter) {
+                    const selectedPriorities = Array.from(priorityFilter.selectedOptions).map(option => option.value);
+                    if (selectedPriorities.length > 0) {
+                        filters.priorities = selectedPriorities;
+                    }
+                }
+
+                // Status filter
+                const statusFilter = document.getElementById('status-filter');
+                if (statusFilter && statusFilter.value) {
+                    filters.status = statusFilter.value;
+                }
+
+                // Date range filters
+                const dateStart = document.getElementById('date-start');
+                const dateEnd = document.getElementById('date-end');
+                
+                if (dateStart && dateStart.value) {
+                    filters.dueDateStart = dateStart.value;
+                }
+                
+                if (dateEnd && dateEnd.value) {
+                    filters.dueDateEnd = dateEnd.value;
+                }
+
+                // Sort options
+                const sortBy = document.getElementById('sort-by');
+                const sortOrder = document.getElementById('sort-order');
+                
+                if (sortBy) {
+                    filters.sortBy = sortBy.value;
+                }
+                
+                if (sortOrder) {
+                    filters.sortOrder = sortOrder.value;
+                }
+
+                this.currentFilters = filters;
+                this.applyFilters();
+            }
+
+            applyFilters() {
+                // Apply filters through TaskManager
+                let filteredTasks = taskManager.filter(this.currentFilters);
+                
+                // Apply sorting
+                if (this.currentFilters.sortBy) {
+                    filteredTasks = taskManager.sort(
+                        filteredTasks, 
+                        this.currentFilters.sortBy, 
+                        this.currentFilters.sortOrder || 'desc'
+                    );
+                }
+
+                // Update UI with search highlighting if search is active
+                if (this.currentFilters.search) {
+                    this.highlightSearchResults(filteredTasks, this.currentFilters.search);
+                }
+
+                // Update task list display
+                window.uiManager.taskListComponent.displayFilteredTasks(filteredTasks);
+                
+                // Update filter indicators
+                this.updateActiveFilters();
+                this.updateResultsInfo(filteredTasks.length);
+                
+                // Save current filters
+                this.saveFilters();
+                
+                // Emit filter change event
+                const event = new CustomEvent('filtersChanged', {
+                    detail: { 
+                        filters: this.currentFilters, 
+                        results: filteredTasks 
+                    }
+                });
+                document.dispatchEvent(event);
+            }
+
+            highlightSearchResults(tasks, searchQuery) {
+                // Store highlighted versions of tasks for display
+                this.highlightedTasks = tasks.map(task => ({
+                    ...task,
+                    highlightedTitle: taskManager.highlightMatches(task.title, searchQuery),
+                    highlightedDescription: taskManager.highlightMatches(task.description || '', searchQuery)
+                }));
+            }
+
+            applyPreset(presetName) {
+                // Clear active preset buttons
+                this.container.querySelectorAll('.preset-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+
+                // Activate current preset button
+                const presetButton = this.container.querySelector(`[data-preset="${presetName}"]`);
+                if (presetButton) {
+                    presetButton.classList.add('active');
+                }
+
+                // Get preset filters
+                const presetFilters = taskManager.applyFilterPreset(presetName);
+                
+                // Apply preset to UI controls
+                this.setFilterValues(presetFilters);
+                
+                // Update current filters and apply
+                this.currentFilters = { ...presetFilters };
+                this.applyFilters();
+                
+                showNotification(`Applied "${presetName}" filter`, 'info');
+            }
+
+            setFilterValues(filters) {
+                // Set search input
+                const searchInput = document.getElementById('task-search');
+                if (searchInput) {
+                    searchInput.value = filters.search || '';
+                }
+
+                // Set category filter
+                const categoryFilter = document.getElementById('category-filter');
+                if (categoryFilter) {
+                    categoryFilter.value = filters.categories ? filters.categories[0] : '';
+                }
+
+                // Set priority filter
+                const priorityFilter = document.getElementById('priority-filter');
+                if (priorityFilter && filters.priorities) {
+                    Array.from(priorityFilter.options).forEach(option => {
+                        option.selected = filters.priorities.includes(option.value);
+                    });
+                }
+
+                // Set status filter
+                const statusFilter = document.getElementById('status-filter');
+                if (statusFilter) {
+                    statusFilter.value = filters.status || '';
+                }
+
+                // Set date inputs
+                const dateStart = document.getElementById('date-start');
+                const dateEnd = document.getElementById('date-end');
+                
+                if (dateStart) {
+                    dateStart.value = filters.dueDateStart || '';
+                }
+                
+                if (dateEnd) {
+                    dateEnd.value = filters.dueDateEnd || '';
+                }
+
+                // Set sort options
+                const sortBy = document.getElementById('sort-by');
+                const sortOrder = document.getElementById('sort-order');
+                
+                if (sortBy) {
+                    sortBy.value = filters.sortBy || 'createdAt';
+                }
+                
+                if (sortOrder) {
+                    sortOrder.value = filters.sortOrder || 'desc';
+                }
+            }
+
+            updateActiveFilters() {
+                const activeFiltersContainer = document.getElementById('active-filters');
+                const activeFiltersRow = document.getElementById('active-filters-row');
+                
+                if (!activeFiltersContainer || !activeFiltersRow) return;
+
+                activeFiltersContainer.innerHTML = '';
+                
+                const filterTags = [];
+
+                // Add filter tags for active filters
+                if (this.currentFilters.search) {
+                    filterTags.push({
+                        label: `Search: "${this.currentFilters.search}"`,
+                        key: 'search'
+                    });
+                }
+
+                if (this.currentFilters.categories && this.currentFilters.categories.length > 0) {
+                    const categoryNames = this.currentFilters.categories.map(id => {
+                        const category = categoryManager.read(id);
+                        return category ? category.name : id;
+                    }).join(', ');
+                    
+                    filterTags.push({
+                        label: `Category: ${categoryNames}`,
+                        key: 'categories'
+                    });
+                }
+
+                if (this.currentFilters.priorities && this.currentFilters.priorities.length > 0) {
+                    filterTags.push({
+                        label: `Priority: ${this.currentFilters.priorities.join(', ')}`,
+                        key: 'priorities'
+                    });
+                }
+
+                if (this.currentFilters.status) {
+                    filterTags.push({
+                        label: `Status: ${this.currentFilters.status}`,
+                        key: 'status'
+                    });
+                }
+
+                if (this.currentFilters.dueDateStart || this.currentFilters.dueDateEnd) {
+                    const start = this.currentFilters.dueDateStart || 'any';
+                    const end = this.currentFilters.dueDateEnd || 'any';
+                    filterTags.push({
+                        label: `Due: ${start} to ${end}`,
+                        key: 'dateRange'
+                    });
+                }
+
+                // Create filter tag elements
+                filterTags.forEach(tag => {
+                    const tagElement = document.createElement('div');
+                    tagElement.className = 'filter-tag';
+                    tagElement.innerHTML = `
+                        ${tag.label}
+                        <button class="filter-tag-remove" data-filter-key="${tag.key}" aria-label="Remove ${tag.label}">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    `;
+                    
+                    // Add remove event listener
+                    const removeButton = tagElement.querySelector('.filter-tag-remove');
+                    removeButton.addEventListener('click', () => {
+                        this.removeFilter(tag.key);
+                    });
+                    
+                    activeFiltersContainer.appendChild(tagElement);
+                });
+
+                // Show/hide active filters row
+                if (filterTags.length > 0) {
+                    activeFiltersRow.style.display = 'flex';
+                } else {
+                    activeFiltersRow.style.display = 'none';
+                }
+            }
+
+            updateResultsInfo(count) {
+                const resultsInfo = document.getElementById('filter-results-info');
+                if (!resultsInfo) return;
+
+                const totalTasks = taskManager.getAll().length;
+                const hasFilters = Object.keys(this.currentFilters).length > 0;
+
+                if (hasFilters) {
+                    resultsInfo.textContent = `Showing ${count} of ${totalTasks} tasks`;
+                    if (count === 0) {
+                        resultsInfo.textContent += ' - try adjusting your filters';
+                    }
+                } else {
+                    resultsInfo.textContent = `Showing all ${totalTasks} tasks`;
+                }
+            }
+
+            removeFilter(filterKey) {
+                switch (filterKey) {
+                    case 'search':
+                        delete this.currentFilters.search;
+                        const searchInput = document.getElementById('task-search');
+                        if (searchInput) searchInput.value = '';
+                        break;
+                    case 'categories':
+                        delete this.currentFilters.categories;
+                        const categoryFilter = document.getElementById('category-filter');
+                        if (categoryFilter) categoryFilter.value = '';
+                        break;
+                    case 'priorities':
+                        delete this.currentFilters.priorities;
+                        const priorityFilter = document.getElementById('priority-filter');
+                        if (priorityFilter) {
+                            Array.from(priorityFilter.options).forEach(option => {
+                                option.selected = false;
+                            });
+                        }
+                        break;
+                    case 'status':
+                        delete this.currentFilters.status;
+                        const statusFilter = document.getElementById('status-filter');
+                        if (statusFilter) statusFilter.value = '';
+                        break;
+                    case 'dateRange':
+                        delete this.currentFilters.dueDateStart;
+                        delete this.currentFilters.dueDateEnd;
+                        const dateStart = document.getElementById('date-start');
+                        const dateEnd = document.getElementById('date-end');
+                        if (dateStart) dateStart.value = '';
+                        if (dateEnd) dateEnd.value = '';
+                        break;
+                }
+
+                this.applyFilters();
+            }
+
+            resetAllFilters() {
+                this.currentFilters = {};
+                
+                // Clear all UI controls
+                this.setFilterValues({});
+                
+                // Clear active preset buttons
+                this.container.querySelectorAll('.preset-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                this.applyFilters();
+                showNotification('All filters cleared', 'info');
+            }
+
+            toggleFilterBar() {
+                if (this.container.style.display === 'none') {
+                    this.container.style.display = 'block';
+                } else {
+                    this.container.style.display = 'none';
+                }
+            }
+
+            populateCategoryOptions() {
+                const categoryFilter = document.getElementById('category-filter');
+                if (!categoryFilter) return;
+
+                // Clear existing options except "All Categories"
+                while (categoryFilter.children.length > 1) {
+                    categoryFilter.removeChild(categoryFilter.lastChild);
+                }
+
+                // Add category options
+                const categories = categoryManager.getAll();
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category.id;
+                    option.textContent = category.name;
+                    categoryFilter.appendChild(option);
+                });
+            }
+
+            saveCurrentAsPreset() {
+                const presetName = prompt('Enter a name for this filter preset:');
+                if (!presetName || presetName.trim() === '') return;
+
+                const normalizedName = presetName.trim().toLowerCase().replace(/\s+/g, '-');
+                
+                // Save to localStorage
+                this.savedPresets[normalizedName] = {
+                    name: presetName.trim(),
+                    filters: { ...this.currentFilters },
+                    created: new Date().toISOString()
+                };
+                
+                this.saveSavedPresets();
+                this.updatePresetButtons();
+                
+                showNotification(`Filter preset "${presetName}" saved!`, 'success');
+            }
+
+            updatePresetButtons() {
+                // Add saved preset buttons dynamically
+                const presetContainer = this.container.querySelector('.filter-preset-buttons');
+                if (!presetContainer) return;
+
+                // Remove old custom preset buttons
+                presetContainer.querySelectorAll('.preset-button.custom').forEach(btn => btn.remove());
+
+                // Add saved preset buttons
+                Object.entries(this.savedPresets).forEach(([key, preset]) => {
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'preset-button custom';
+                    button.dataset.preset = key;
+                    button.textContent = preset.name;
+                    button.title = `Saved: ${new Date(preset.created).toLocaleDateString()}`;
+                    
+                    button.addEventListener('click', () => {
+                        this.applyPreset(key);
+                    });
+                    
+                    presetContainer.appendChild(button);
+                });
+            }
+
+            setupFilterPersistence() {
+                // Save filters to localStorage periodically
+                this.filterPersistenceKey = 'ccpm_current_filters';
+                
+                // Restore filters on page load
+                window.addEventListener('beforeunload', () => {
+                    this.saveFilters();
+                });
+            }
+
+            saveFilters() {
+                try {
+                    localStorage.setItem(this.filterPersistenceKey, JSON.stringify(this.currentFilters));
+                } catch (error) {
+                    console.warn('Could not save filter state:', error);
+                }
+            }
+
+            restoreFilters() {
+                try {
+                    const savedFilters = localStorage.getItem(this.filterPersistenceKey);
+                    if (savedFilters) {
+                        const filters = JSON.parse(savedFilters);
+                        this.currentFilters = filters;
+                        this.setFilterValues(filters);
+                        
+                        // Apply filters after a short delay to ensure UI is ready
+                        setTimeout(() => {
+                            this.applyFilters();
+                        }, 100);
+                    }
+                } catch (error) {
+                    console.warn('Could not restore filter state:', error);
+                }
+            }
+
+            loadSavedPresets() {
+                try {
+                    const saved = localStorage.getItem('ccpm_filter_presets');
+                    return saved ? JSON.parse(saved) : {};
+                } catch (error) {
+                    console.warn('Could not load saved presets:', error);
+                    return {};
+                }
+            }
+
+            saveSavedPresets() {
+                try {
+                    localStorage.setItem('ccpm_filter_presets', JSON.stringify(this.savedPresets));
+                } catch (error) {
+                    console.warn('Could not save presets:', error);
+                }
+            }
+
+            // Public API
+            getCurrentFilters() {
+                return { ...this.currentFilters };
+            }
+
+            setFilters(filters) {
+                this.currentFilters = { ...filters };
+                this.setFilterValues(filters);
+                this.applyFilters();
+            }
+
+            clearFilters() {
+                this.resetAllFilters();
+            }
+
+            getHighlightedTasks() {
+                return this.highlightedTasks || [];
+            }
+        }
         class CalendarComponent {
             constructor() {
                 this.container = document.querySelector('.calendar-view');
@@ -5102,9 +7465,446 @@
             }
         }
 
-        // ================================
-        // SYSTEM INITIALIZATION
-        // ================================
+        /**
+         * Enhanced Error Handling and User Feedback System
+         */
+        class ErrorHandler {
+            constructor() {
+                this.errorQueue = [];
+                this.maxRetries = 3;
+                this.isInitialized = false;
+                
+                this.init();
+            }
+
+            init() {
+                this.setupGlobalErrorHandling();
+                this.setupNetworkErrorHandling();
+                this.setupStorageErrorHandling();
+                this.isInitialized = true;
+                console.info('ErrorHandler initialized');
+            }
+
+            setupGlobalErrorHandling() {
+                // Catch unhandled JavaScript errors
+                window.addEventListener('error', (event) => {
+                    this.handleJavaScriptError(event.error, event.filename, event.lineno);
+                });
+
+                // Catch unhandled promise rejections
+                window.addEventListener('unhandledrejection', (event) => {
+                    this.handlePromiseRejection(event.reason);
+                    event.preventDefault(); // Prevent console error
+                });
+
+                // Catch resource loading errors
+                window.addEventListener('error', (event) => {
+                    if (event.target !== window) {
+                        this.handleResourceError(event.target);
+                    }
+                }, true);
+            }
+
+            setupNetworkErrorHandling() {
+                // Monitor network status
+                window.addEventListener('online', () => {
+                    this.handleNetworkRestore();
+                });
+
+                window.addEventListener('offline', () => {
+                    this.handleNetworkLoss();
+                });
+            }
+
+            setupStorageErrorHandling() {
+                // Monitor storage quota issues
+                if (navigator.storage && navigator.storage.estimate) {
+                    setInterval(() => {
+                        this.checkStorageQuota();
+                    }, 60000); // Check every minute
+                }
+            }
+
+            handleJavaScriptError(error, filename, lineno) {
+                const errorInfo = {
+                    type: 'javascript_error',
+                    message: error?.message || 'Unknown JavaScript error',
+                    filename: filename,
+                    lineno: lineno,
+                    stack: error?.stack,
+                    timestamp: Date.now()
+                };
+
+                console.error('JavaScript Error:', errorInfo);
+                this.showUserFriendlyError(errorInfo);
+                this.logError(errorInfo);
+            }
+
+            handlePromiseRejection(reason) {
+                const errorInfo = {
+                    type: 'promise_rejection',
+                    message: reason?.message || reason || 'Unhandled promise rejection',
+                    stack: reason?.stack,
+                    timestamp: Date.now()
+                };
+
+                console.error('Promise Rejection:', errorInfo);
+                this.showUserFriendlyError(errorInfo);
+                this.logError(errorInfo);
+            }
+
+            handleResourceError(target) {
+                const errorInfo = {
+                    type: 'resource_error',
+                    message: `Failed to load resource: ${target.src || target.href}`,
+                    element: target.tagName,
+                    timestamp: Date.now()
+                };
+
+                console.warn('Resource Error:', errorInfo);
+                // Don't show user notification for resource errors unless critical
+                this.logError(errorInfo);
+            }
+
+            handleNetworkLoss() {
+                this.showNotification(
+                    'You are currently offline. Your changes will be saved locally and synced when connection is restored.',
+                    'warning',
+                    {
+                        persistent: true,
+                        actionButton: {
+                            text: 'Learn More',
+                            action: () => this.showOfflineHelp()
+                        }
+                    }
+                );
+            }
+
+            handleNetworkRestore() {
+                this.showNotification(
+                    'Connection restored! Your data is now syncing.',
+                    'success',
+                    {
+                        duration: 3000
+                    }
+                );
+
+                // Process any queued errors or operations
+                this.processErrorQueue();
+            }
+
+            async checkStorageQuota() {
+                if (!navigator.storage || !navigator.storage.estimate) return;
+
+                try {
+                    const estimate = await navigator.storage.estimate();
+                    const usagePercentage = (estimate.usage / estimate.quota) * 100;
+
+                    if (usagePercentage > 90) {
+                        this.handleStorageQuotaWarning(usagePercentage);
+                    }
+                } catch (error) {
+                    console.warn('Failed to check storage quota:', error);
+                }
+            }
+
+            handleStorageQuotaWarning(usagePercentage) {
+                this.showNotification(
+                    `Storage is ${Math.round(usagePercentage)}% full. Consider exporting your data and clearing old tasks.`,
+                    'warning',
+                    {
+                        persistent: true,
+                        actionButton: {
+                            text: 'Export Data',
+                            action: () => {
+                                if (window.dataManager) {
+                                    handleDataExport();
+                                }
+                            }
+                        }
+                    }
+                );
+            }
+
+            showUserFriendlyError(errorInfo) {
+                let userMessage = '';
+                let actionButton = null;
+
+                switch (errorInfo.type) {
+                    case 'javascript_error':
+                        userMessage = 'Something went wrong. The page may need to be refreshed.';
+                        actionButton = {
+                            text: 'Refresh Page',
+                            action: () => window.location.reload()
+                        };
+                        break;
+
+                    case 'promise_rejection':
+                        if (errorInfo.message.includes('storage') || errorInfo.message.includes('quota')) {
+                            userMessage = 'Storage is full. Please export your data and clear some tasks.';
+                            actionButton = {
+                                text: 'Export Data',
+                                action: () => handleDataExport()
+                            };
+                        } else if (errorInfo.message.includes('network') || errorInfo.message.includes('fetch')) {
+                            userMessage = 'Network error occurred. Please check your connection and try again.';
+                            actionButton = {
+                                text: 'Retry',
+                                action: () => this.retryLastOperation()
+                            };
+                        } else {
+                            userMessage = 'An unexpected error occurred. Your data is safe.';
+                        }
+                        break;
+
+                    case 'resource_error':
+                        // Usually don't show to user unless critical
+                        return;
+
+                    default:
+                        userMessage = 'An unexpected error occurred. Please try again.';
+                }
+
+                this.showNotification(userMessage, 'error', {
+                    persistent: true,
+                    actionButton: actionButton
+                });
+            }
+
+            showNotification(message, type = 'info', options = {}) {
+                const {
+                    duration = type === 'error' ? 0 : 5000, // Errors persist until dismissed
+                    persistent = false,
+                    actionButton = null
+                } = options;
+
+                // Create notification element
+                const notification = document.createElement('div');
+                notification.className = `notification notification-${type}`;
+                notification.setAttribute('role', 'alert');
+                notification.setAttribute('aria-live', type === 'error' ? 'assertive' : 'polite');
+
+                // Create notification content
+                const content = document.createElement('div');
+                content.className = 'notification-content';
+                
+                const messageEl = document.createElement('div');
+                messageEl.className = 'notification-message';
+                messageEl.textContent = message;
+                content.appendChild(messageEl);
+
+                // Add action button if provided
+                if (actionButton) {
+                    const button = document.createElement('button');
+                    button.className = 'notification-button';
+                    button.textContent = actionButton.text;
+                    button.addEventListener('click', () => {
+                        actionButton.action();
+                        this.dismissNotification(notification);
+                    });
+                    content.appendChild(button);
+                }
+
+                // Add dismiss button for persistent notifications
+                if (persistent || duration === 0) {
+                    const dismissBtn = document.createElement('button');
+                    dismissBtn.className = 'notification-dismiss';
+                    dismissBtn.innerHTML = '&times;';
+                    dismissBtn.setAttribute('aria-label', 'Dismiss notification');
+                    dismissBtn.addEventListener('click', () => {
+                        this.dismissNotification(notification);
+                    });
+                    content.appendChild(dismissBtn);
+                }
+
+                notification.appendChild(content);
+
+                // Add styles
+                Object.assign(notification.style, {
+                    position: 'fixed',
+                    top: '20px',
+                    right: '20px',
+                    minWidth: '300px',
+                    maxWidth: '500px',
+                    padding: '16px',
+                    borderRadius: '8px',
+                    color: 'white',
+                    fontWeight: '500',
+                    fontSize: '14px',
+                    zIndex: '10000',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                    transition: 'all 0.3s ease',
+                    transform: 'translateX(100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
+                });
+
+                // Set background color based on type
+                const colors = {
+                    info: '#3b82f6',
+                    success: '#10b981',
+                    warning: '#f59e0b',
+                    error: '#ef4444'
+                };
+                notification.style.backgroundColor = colors[type] || colors.info;
+
+                // Add to DOM
+                document.body.appendChild(notification);
+
+                // Animate in
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(0)';
+                }, 10);
+
+                // Auto dismiss if duration is set
+                if (duration > 0) {
+                    setTimeout(() => {
+                        this.dismissNotification(notification);
+                    }, duration);
+                }
+
+                return notification;
+            }
+
+            dismissNotification(notification) {
+                if (!notification.parentNode) return;
+
+                notification.style.transform = 'translateX(100%)';
+                notification.style.opacity = '0';
+
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }
+
+            retryLastOperation() {
+                // Implement retry logic for the last failed operation
+                console.info('Retrying last operation...');
+                this.showNotification('Retrying...', 'info', { duration: 2000 });
+            }
+
+            showOfflineHelp() {
+                const helpMessage = `
+                    Offline Mode:
+                    
+                    • Your tasks are stored locally on this device
+                    • You can continue creating and editing tasks while offline
+                    • Changes will sync automatically when connection is restored
+                    • Export your data regularly as a backup
+                `;
+
+                this.showNotification(helpMessage, 'info', {
+                    persistent: true
+                });
+            }
+
+            logError(errorInfo) {
+                // Store error in local storage for debugging
+                try {
+                    const errorLog = JSON.parse(localStorage.getItem('ccpm_error_log') || '[]');
+                    errorLog.push(errorInfo);
+                    
+                    // Keep only last 50 errors
+                    if (errorLog.length > 50) {
+                        errorLog.splice(0, errorLog.length - 50);
+                    }
+                    
+                    localStorage.setItem('ccpm_error_log', JSON.stringify(errorLog));
+                } catch (error) {
+                    console.warn('Failed to log error to localStorage:', error);
+                }
+            }
+
+            processErrorQueue() {
+                // Process any queued operations that failed due to errors
+                while (this.errorQueue.length > 0) {
+                    const operation = this.errorQueue.shift();
+                    try {
+                        operation();
+                    } catch (error) {
+                        console.warn('Failed to process queued operation:', error);
+                    }
+                }
+            }
+
+            getErrorReport() {
+                try {
+                    const errorLog = JSON.parse(localStorage.getItem('ccpm_error_log') || '[]');
+                    const report = {
+                        totalErrors: errorLog.length,
+                        errorTypes: {},
+                        recentErrors: errorLog.slice(-10),
+                        timestamp: Date.now()
+                    };
+
+                    // Group errors by type
+                    errorLog.forEach(error => {
+                        if (!report.errorTypes[error.type]) {
+                            report.errorTypes[error.type] = 0;
+                        }
+                        report.errorTypes[error.type]++;
+                    });
+
+                    return report;
+                } catch (error) {
+                    console.warn('Failed to generate error report:', error);
+                    return { totalErrors: 0, errorTypes: {}, recentErrors: [], timestamp: Date.now() };
+                }
+            }
+
+            clearErrorLog() {
+                try {
+                    localStorage.removeItem('ccpm_error_log');
+                    console.info('Error log cleared');
+                } catch (error) {
+                    console.warn('Failed to clear error log:', error);
+                }
+            }
+
+            // Recovery methods
+            recoverFromStorageError() {
+                try {
+                    // Clear non-essential data to free up space
+                    localStorage.removeItem('ccpm_error_log');
+                    localStorage.removeItem('ccpm_todo_backup');
+                    
+                    this.showNotification('Storage cleaned up. Please try your action again.', 'info');
+                } catch (error) {
+                    this.showNotification('Unable to free up storage. Please refresh the page.', 'error', {
+                        actionButton: {
+                            text: 'Refresh',
+                            action: () => window.location.reload()
+                        }
+                    });
+                }
+            }
+
+            recoverFromDataCorruption() {
+                const confirmation = confirm(
+                    'Data corruption detected. Would you like to try recovering from backup? ' +
+                    'This will restore your tasks to the last known good state.'
+                );
+
+                if (confirmation) {
+                    try {
+                        const backup = localStorage.getItem('ccpm_todo_backup');
+                        if (backup) {
+                            localStorage.setItem('ccpm_todo_data', backup);
+                            window.location.reload();
+                        } else {
+                            this.showNotification('No backup available. Starting with empty task list.', 'warning');
+                            localStorage.removeItem('ccpm_todo_data');
+                            window.location.reload();
+                        }
+                    } catch (error) {
+                        this.showNotification('Recovery failed. Please export any visible data and refresh.', 'error');
+                    }
+                }
+            }
+        }
         
         /**
          * Initialize the data layer and create global instances
